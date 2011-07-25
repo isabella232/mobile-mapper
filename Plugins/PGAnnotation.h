@@ -1,5 +1,5 @@
 //
-//  PHAnnotation.h
+//  PGAnnotation.h
 //  PhoneGapLib
 //
 //  Created by Brett Rudd on 17/03/2010.
