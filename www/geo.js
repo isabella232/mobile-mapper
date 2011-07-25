@@ -1,5 +1,5 @@
 var geo = function() {
-  
+//  var map;
   function getPosition() {
     var dfd = $.Deferred();
     navigator.geolocation.getCurrentPosition(
@@ -10,23 +10,75 @@ var geo = function() {
   }
   
   function putMap(coords) {
-    var options = {
-      buttonCallback: "cbMapCallback",
-      height: 420,
-      offsetTop: 44,
-      diameter: 1000,
-      lat: coords.latitude,
-      lon: coords.longitude
-    };
-    
     setTimeout(function() { geo.locked = false; }, 1000);
     geo.locked = true;
-  	window.plugins.mapKit.showMap();
-  	window.plugins.mapKit.setMapData(options);
-  	window.plugins.mapKit.addMapPins(app.mapPins);
+    
+    var user_moved_map = false;
+    var record_markers = {};
+    
+    // Set center of map to the coordinates passed in
+    var current_map_location = new google.maps.LatLng(coords.latitude, coords.longitude);
+    
+    // Set the map options
+    var map_options = {
+      zoom: 13,
+      mapTypeId: google.maps.MapTypeId.ROADMAP,
+      center: current_map_location,
+      mapTypeControl: false
+    };
+    
+    // Create the map
+    var map = new google.maps.Map(document.getElementById("map-container"), map_options);
+    
+    // Create marker for the user's position on the map
+    var current_loc_icon = new google.maps.MarkerImage('images/current_location_icon.png', null, null, null, new google.maps.Size(12, 12));
+    var current_location_marker = new google.maps.Marker({
+      map: map,
+      draggable: false,
+      position: current_map_location,
+      icon: current_loc_icon
+    });
+
+    // Refresh the map pins after the map is dragged
+    google.maps.event.addListener(map, 'dragend', function () {
+      putPins(map, record_markers);
+      user_moved_map = true;
+    });
+
+    // Setup the info window for the user's position
+    var info_window = new google.maps.InfoWindow({
+      content: '<p>Current Location</p>'
+    });
+    google.maps.event.addListener(current_location_marker, 'click', function (location) {
+      info_window.open(map, current_location_marker);
+    });
+
+    // Setup the watch method to follow the user if they are moving
+    nearby_watch = navigator.geolocation.watchPosition(function (pos) {
+      current_location = pos.coords
+      current_map_location = new google.maps.LatLng(current_location.latitude, current_location.longitude);
+      if (!user_moved_map) {
+        map.setCenter(current_map_location);
+        map.setZoom(16);
+      }
+      current_location_marker.setPosition(current_map_location);
+      putPins(map, record_markers);
+    }, function () {
+      navigator.notification.alert("Geolocation service failed to determine your location.", $.noop, "GPS Failure");
+    }, {
+      enableHighAccuracy: true,
+      maximumAge: 30000
+    });
+
+    //load the initial points once the map has finished loading
+    google.maps.event.addListener(map, 'bounds_changed', function () {
+      putPins(map, record_markers);
+      google.maps.event.clearListeners(map, 'bounds_changed');
+    });
   }
 
-  function putPins(pins) {
+  function putPins(map, markers) {
+    /*
     app.mapPins = [];
     $.each(pins, function(i, pin) {
       app.mapPins.push({ 
@@ -38,7 +90,36 @@ var geo = function() {
         selected:false
       })
     })
-		if (app.mapPins.length > 0) window.plugins.mapKit.addMapPins(app.mapPins);        	
+		*/
+		var bounds = map.getBounds();
+    var ne = bounds.getNorthEast();
+    var sw = bounds.getSouthWest();
+
+    $.getJSON('http://'+ app.couch + "/" + app.database + '/_design/geo/_spatiallist/geojson/full?bbox=' + sw.lng() + ',' + sw.lat() + ',' + ne.lng() + ',' + ne.lat() + '&callback=?', {}, function (resp) {
+      $.each(resp.features, function (i, p) {
+        var id = p.properties._id;
+        if (markers[id]) return;
+        var content = '<div class="ibc"><h3 class="ibh">' + p.properties.title + '</h3>' + '<p class="ibhs"></p></div>';
+        var info_window = new google.maps.InfoWindow({
+          content: content,
+          maxWidth: 400
+        });
+
+        var pin_icon = new google.maps.MarkerImage('images/green_pin.png', null, null, null, new google.maps.Size(12, 28));
+console.log(p.geometry);
+        var marker = new google.maps.Marker({
+          map: map,
+          icon: pin_icon,
+          shadow: new google.maps.MarkerImage('images/pin_shadow.png', new google.maps.Size(56, 56), null, new google.maps.Point(5, 28), new google.maps.Size(28, 28)),
+          position: new google.maps.LatLng(p.geometry.coordinates[1], p.geometry.coordinates[0])
+        });
+        google.maps.event.addListener(marker, 'click', function (location) {
+          info_window.open(map, marker);
+        });
+        markers[id] = marker;
+      });
+//console.log(markers);
+    });
   }
   
   function deleteMap() {
@@ -53,6 +134,7 @@ var geo = function() {
   }
   
   function onMapMove(lat, lon, deltaY, deltaX) {
+
     if (geo.locked) return;
     
     app.lastLocation = {
@@ -64,8 +146,10 @@ var geo = function() {
 
     app.lastLocation.bbox = getBBOX(app.lastLocation);
     
-    window.plugins.mapKit.clearMapPins();
-    couch.get("http://open211.org/api/services?bbox=" + app.lastLocation.bbox).then(function(results) {
+    //window.plugins.mapKit.clearMapPins();
+    console.log('clear map pins');
+    console.log("http://x.ic.ht/public_art/geo?bbox=" + app.lastLocation.bbox);
+    couch.get("http://x.ic.ht/public_art/geo?bbox=" + app.lastLocation.bbox).then(function(results) {
       putPins(results.rows.map(function(row) {
         return row.value;
       }));

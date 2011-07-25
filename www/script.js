@@ -11,9 +11,9 @@
 
 var app = function() {
   var mapPins =[];
-  var database = "some_dataset";
-  var couch = "localhost:5984";
-  var default_location = {latitude: 47.6062095, longitude: -122.3320708};
+  var database = "public_art";
+  var couch = "x.ic.ht";
+  var default_location = {latitude: 37.78415, longitude: -122.43113};
   var current_location = default_location;
   var is_saving = false;
   var nearby_watch;
@@ -25,6 +25,7 @@ var app = function() {
     $("#nearby_map").bind("pagebeforeshow", function() {
       geo.getPosition().then(function(position) {
         geo.putMap(position.coords);
+        //configure_nearby_map();
       })
     });
     $("#nearby_map").bind("pagehide", function() {
@@ -40,27 +41,31 @@ var app = function() {
     var bounds = map.getBounds();
     var ne = bounds.getNorthEast();
     var sw = bounds.getSouthWest();
-    $.getJSON($.couch.urlPrefix + "/" + database + '/_design/geo/_spatiallist/geojson/pointsFullReviewed?bbox=' + sw.lat() + ',' + sw.lng() + ',' + ne.lat() + ',' + ne.lng() + '&callback=?', {}, function (resp) {
+
+    $.getJSON('http://'+ couch + "/" + database + '/_design/geo/_spatiallist/geojson/full?bbox=' + sw.lng() + ',' + sw.lat() + ',' + ne.lng() + ',' + ne.lat() + '&callback=?', {}, function (resp) {
       $.each(resp.features, function (i, p) {
         var id = p.properties._id;
         if (markers[id]) return;
-        var content = '<div class="ibc"><h3 class="ibh">' + p.properties.street_address + '</h3>' + '<p class="ibhs"><strong>Status: </strong>' + p.properties.status.replace(/[-]/g, ' ') + '</p></div>';
+        var content = '<div class="ibc"><h3 class="ibh">' + p.properties.street_address + '</h3>' + '<p class="ibhs"></p></div>';
         var info_window = new google.maps.InfoWindow({
           content: content,
           maxWidth: 400
         });
-        var pin_icon = new google.maps.MarkerImage((p.properties.status == 'healthy') ? 'images/green_pin.png' : 'images/red_pin.png', null, null, null, new google.maps.Size(12, 28));
+
+        var pin_icon = new google.maps.MarkerImage('images/green_pin.png', null, null, null, new google.maps.Size(12, 28));
+console.log(p.geometry);
         var marker = new google.maps.Marker({
           map: map,
           icon: pin_icon,
           shadow: new google.maps.MarkerImage('images/pin_shadow.png', new google.maps.Size(56, 56), null, new google.maps.Point(5, 28), new google.maps.Size(28, 28)),
-          position: new google.maps.LatLng(p.geometry.coordinates[0], p.geometry.coordinates[1])
+          position: new google.maps.LatLng(p.geometry.coordinates[1], p.geometry.coordinates[0])
         });
         google.maps.event.addListener(marker, 'click', function (location) {
           info_window.open(map, marker);
         });
         markers[id] = marker;
       });
+//console.log(markers);
     });
   }
 
@@ -70,11 +75,11 @@ var app = function() {
     var current_map_location = new google.maps.LatLng(current_location.latitude, current_location.longitude);
     var map_options = {
       zoom: 13,
-      mapTypeId: google.maps.MapTypeId.HYBRID,
+      mapTypeId: google.maps.MapTypeId.ROADMAP,
       center: current_map_location,
       mapTypeControl: false
     };
-    var map = new google.maps.Map(document.getElementById("nearby_map_canvas"), map_options);
+    var map = new google.maps.Map(document.getElementById("map-container"), map_options);
     var current_loc_icon = new google.maps.MarkerImage('images/current_location_icon.png', null, null, null, new google.maps.Size(12, 12));
     var current_location_marker = new google.maps.Marker({
       map: map,
@@ -331,6 +336,8 @@ var app = function() {
   
   return {
     mapPins: mapPins,
+    database: database,
+    couch: couch,
     bind: bind
   };
 
