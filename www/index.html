@@ -14,6 +14,8 @@
     <script type="text/javascript" charset="utf-8" src="jquery.couch2.js"></script>
     <script type="text/javascript" charset="utf-8" src="geo.js"></script>
     <script type="text/javascript" charset="utf-8" src="script.js"></script>
+    <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=true"></script>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
   </head>
   <body>
     <div data-role="page" id="home" data-theme="d">
@@ -150,7 +152,7 @@
         <a href="#add_record" data-transition="slideup" class="ui-btn-right" title="Add" data-role="button">Add</a>
       </div>
       <div data-role="content">
-        
+        <div id="map-container" style="width: 100%; height: 100%"></div>
       </div>
     </div>
   </body>
