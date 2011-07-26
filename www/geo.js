@@ -1,5 +1,5 @@
 var geo = function() {
-//  var map;
+
   function getPosition() {
     var dfd = $.Deferred();
     navigator.geolocation.getCurrentPosition(
@@ -103,20 +103,8 @@ var geo = function() {
   }
 
   function putPins(map, markers) {
-    
     app.mapPins = [];
-    /*
-    $.each(pins, function(i, pin) {
-      app.mapPins.push({ 
-        lat: pin.latitude,
-        lon: pin.longitude,
-        title: pin.name,
-        pinColor: "purple", 
-        index:0,
-        selected:false
-      })
-    })
-		*/
+    
 		var bounds = map.getBounds();
     var ne = bounds.getNorthEast();
     var sw = bounds.getSouthWest();
@@ -127,12 +115,11 @@ var geo = function() {
           markers[p.properties._id] = makePin(map, p);
         }
       });
-//console.log(markers);
     });
   }
   
   function deleteMap() {
-    window.plugins.mapKit.hideMap();
+    $('#map-container').empty();
   }
   
   function getBBOX(location) {
@@ -155,9 +142,6 @@ var geo = function() {
 
     app.lastLocation.bbox = getBBOX(app.lastLocation);
     
-    //window.plugins.mapKit.clearMapPins();
-    console.log('clear map pins');
-    console.log("http://x.ic.ht/public_art/geo?bbox=" + app.lastLocation.bbox);
     couch.get("http://x.ic.ht/public_art/geo?bbox=" + app.lastLocation.bbox).then(function(results) {
       putPins(results.rows.map(function(row) {
         return row.value;
