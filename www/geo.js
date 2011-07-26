@@ -76,10 +76,36 @@ var geo = function() {
       google.maps.event.clearListeners(map, 'bounds_changed');
     });
   }
+  
+  function makePin(map, p) {
+    var id = p.properties._id;
+    
+    var content = '<div class="ibc"><h3 class="ibh">' + p.properties.title + '</h3>' + '<p class="ibhs"></p></div>';
+    var info_window = new google.maps.InfoWindow({
+      content: content,
+      maxWidth: 400
+    });
+
+    var pin_icon = new google.maps.MarkerImage('images/green_pin.png', null, null, null, new google.maps.Size(12, 28));
+
+    var marker = new google.maps.Marker({
+      map: map,
+      icon: pin_icon,
+      shadow: new google.maps.MarkerImage('images/pin_shadow.png', new google.maps.Size(56, 56), null, new google.maps.Point(5, 28), new google.maps.Size(28, 28)),
+      position: new google.maps.LatLng(p.geometry.coordinates[1], p.geometry.coordinates[0])
+    });
+    google.maps.event.addListener(marker, 'click', function (location) {
+      info_window.open(map, marker);
+    });
+    
+    return marker;
+    
+  }
 
   function putPins(map, markers) {
-    /*
+    
     app.mapPins = [];
+    /*
     $.each(pins, function(i, pin) {
       app.mapPins.push({ 
         lat: pin.latitude,
@@ -97,26 +123,9 @@ var geo = function() {
 
     $.getJSON('http://'+ app.couch + "/" + app.database + '/_design/geo/_spatiallist/geojson/full?bbox=' + sw.lng() + ',' + sw.lat() + ',' + ne.lng() + ',' + ne.lat() + '&callback=?', {}, function (resp) {
       $.each(resp.features, function (i, p) {
-        var id = p.properties._id;
-        if (markers[id]) return;
-        var content = '<div class="ibc"><h3 class="ibh">' + p.properties.title + '</h3>' + '<p class="ibhs"></p></div>';
-        var info_window = new google.maps.InfoWindow({
-          content: content,
-          maxWidth: 400
-        });
-
-        var pin_icon = new google.maps.MarkerImage('images/green_pin.png', null, null, null, new google.maps.Size(12, 28));
-console.log(p.geometry);
-        var marker = new google.maps.Marker({
-          map: map,
-          icon: pin_icon,
-          shadow: new google.maps.MarkerImage('images/pin_shadow.png', new google.maps.Size(56, 56), null, new google.maps.Point(5, 28), new google.maps.Size(28, 28)),
-          position: new google.maps.LatLng(p.geometry.coordinates[1], p.geometry.coordinates[0])
-        });
-        google.maps.event.addListener(marker, 'click', function (location) {
-          info_window.open(map, marker);
-        });
-        markers[id] = marker;
+        if (!markers[p.properties._id]) {
+          markers[p.properties._id] = makePin(map, p);
+        }
       });
 //console.log(markers);
     });
