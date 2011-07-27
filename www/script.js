@@ -128,7 +128,11 @@ var app = function() {
       current_location = pos.coords
       reverse_geocode_location(new google.maps.LatLng(current_location.latitude, current_location.longitude));
     }, function () {
-      navigator.notification.alert("Geolocation service failed. Drag the map marker to indicate your location.", null, "GPS Failure");
+      if(navigator.notification.alert) {
+        navigator.notification.alert("Geolocation service failed. Drag the map marker to indicate your location.", null, "GPS Failure");
+      } else {
+        alert("Geolocation service failed. Drag the map marker to indicate your location.");
+      }
     }, {
       enableHighAccuracy: true,
       maximumAge: 30000
