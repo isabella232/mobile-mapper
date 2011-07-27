@@ -35,14 +35,14 @@
             <li><a href="#set_username">Set Your Username</a></li>
         </ul>
       </div>
-      <div data-role="footer">
+      <div data-role="footer" data-id="footer-nav" data-position="fixed">
         <div data-role="navbar">
           <ul>
-          	<li><a href="index.html" data-icon="grid">list view</a></li>
+            <li><a href="#nearby_map" data-icon="home" title="map">map</a></li>
+          	<li><a href="#list_view" data-icon="grid">listing</a></li>
           	<li><a href="index.html" data-icon="star">favorite</a></li>
           	<li><a href="#add_record" data-icon="plus" data-transition="slideup" title="add artwork">add artwork</a></li>
           	<li><a href="index.html" data-icon="search">search</a></li>
-          	<li><a href="#home" data-icon="home">home</a></li>
         	</ul>
       	</div>
       </div>
@@ -159,11 +159,22 @@
     </div>
     <div data-role="page" id="nearby_map" class="page-map" data-theme="d">
       <div data-role="header">
-        <h1>Nearby Map</h1>
-        <a href="#add_record" data-transition="slideup" class="ui-btn-right" title="Add" data-role="button">Add</a>
+        <h1>Map</h1>
       </div>
       <div data-role="content">
         <div id="map-container" style="width: 100%; height: 100%"></div>
+      </div>
+      <div data-role="footer" data-id="footer-nav" data-position="fixed">
+        <div data-role="navbar">
+          <ul>
+            <li><a href="#nearby_map" data-icon="home" title="map">map</a></li>
+          	<li><a href="#list_view" data-icon="grid">listing</a></li>
+          	<li><a href="index.html" data-icon="star">favorite</a></li>
+          	<li><a href="#add_record" data-icon="plus" data-transition="slideup" title="add artwork">add artwork</a></li>
+          	<li><a href="index.html" data-icon="search">search</a></li>
+        	</ul>
+      	</div>
+      </div>
       </div>
     </div>
   </body>
