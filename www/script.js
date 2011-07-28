@@ -29,11 +29,16 @@ var app = function() {
       })
     });
     $("#nearby_map").bind("pagehide", function() {
-      geo.deleteMap();
+      //geo.deleteMap();
     });
     $("#add_record").bind("pagehide", function() {
       navigator.geolocation.clearWatch(add_record_watch);
     });
+    
+    $("#find_me").bind('tap', function(ev) {
+      geo.panTo();
+    });
+    
     present_agreement();
   }
 
