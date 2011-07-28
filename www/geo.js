@@ -118,7 +118,6 @@ var geo = function() {
   }
 
   function putPins(map, markers) {
-    app.mapPins = [];
     
 		var bounds = map.getBounds();
     var ne = bounds.getNorthEast();
@@ -129,6 +128,8 @@ var geo = function() {
       $.each(resp.features, function (i, p) {
         if (!markers[p.properties._id]) {
           markers[p.properties._id] = makePin(map, p);
+          // Add each point to the global list of pins
+          app.mapPins.push(p);
         }
       });
       $.mobile.hidePageLoadingMsg();

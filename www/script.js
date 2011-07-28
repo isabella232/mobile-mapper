@@ -10,7 +10,7 @@
  */
 
 var app = function() {
-  var mapPins =[];
+  var mapPins = [];
   var database = "public_art";
   var couch = "x.iriscouch.com";
   var default_location = {latitude: 37.78415, longitude: -122.43113};
@@ -39,7 +39,41 @@ var app = function() {
       geo.panTo();
     });
     
+    $("#list_view").bind("pagebeforeshow", function() {
+      buildListView();
+      //console.log(mapPins);
+    });
+    
     present_agreement();
+  }
+  
+  function buildListView() {
+    var retHtml = '';
+    var imgs, image_path;
+
+    if(mapPins.length > 0) {
+      $.each(mapPins, function (idx, el) {
+        if(el.properties._attachments) {
+          imgs = getKeys(el.properties._attachments);
+          image_path = 'http://'+couch+'/'+database+'/'+el.properties._id+'/'+imgs[0];
+        } else {
+          image_path = 'images/noimage.png';
+        }
+        retHtml += '<li><h3>'+el.properties.title+'</h3><img src="'+image_path+'" /></li>';
+      });
+    }
+    //console.log(retHtml);
+    $('#list_view_ul').html(retHtml);
+  }
+  
+  var getKeys = function(obj){
+     var keys = [];
+     for(var key in obj){
+       if (obj.hasOwnProperty(key)) {
+         keys.push(key);
+       }
+     }
+     return keys;
   }
 
   function handle_username_options() {
