@@ -12,7 +12,7 @@
 var app = function() {
   var mapPins =[];
   var database = "public_art";
-  var couch = "x.ic.ht";
+  var couch = "x.iriscouch.com";
   var default_location = {latitude: 37.78415, longitude: -122.43113};
   var current_location = default_location;
   var is_saving = false;
@@ -102,8 +102,9 @@ var app = function() {
     });
 
     google.maps.event.addListener(map, 'dragend', function () {
-      load_records_for_map_bounds(map, record_markers);
+      geo.putPins(map, record_markers);
     });
+
 
     var info_window = new google.maps.InfoWindow();
 
@@ -265,10 +266,6 @@ var app = function() {
   };
 
 }();
-
-
-  
-
  
 $(document).ready(function() {
   app.bind();
