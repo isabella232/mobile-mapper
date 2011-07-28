@@ -1,12 +1,25 @@
 var geo = function() {
-
+  var map;
   function getPosition() {
     var dfd = $.Deferred();
     navigator.geolocation.getCurrentPosition(
       function(position) { dfd.resolve(position) },
-      function(error) { dfd.resolve({coords: {latitude: 37.7749295, longitude: -122.4194155}}) }
+      function(error) { dfd.resolve({coords: {latitude: 37.7749295, longitude: -122.4194155}}) },
+      {maximumAge:600000}
     )
     return dfd.promise();
+  }
+  
+  // Wrapper for gmaps panTo (if no coords are passed, we go to the user's position).
+  function panTo(coords) {
+    if(coords) {
+      map.panTo(new google.maps.LatLng(coords.latitude, coords.longitude));
+    } else {
+      getPosition().then(function(pos) {
+        coords = pos.coords;
+        map.panTo(new google.maps.LatLng(coords.latitude, coords.longitude));
+      });
+    }
   }
   
   function putMap(coords) {
@@ -28,7 +41,7 @@ var geo = function() {
     };
     
     // Create the map
-    var map = new google.maps.Map(document.getElementById("map-container"), map_options);
+    map = new google.maps.Map(document.getElementById("map-container"), map_options);
     
     // Create marker for the user's position on the map
     var current_loc_icon = new google.maps.MarkerImage('images/current_location_icon.png', null, null, null, new google.maps.Size(12, 12));
@@ -152,6 +165,7 @@ var geo = function() {
 
   return {
     getPosition: getPosition,
+    panTo: panTo,
     putMap: putMap,
     putPins: putPins,
     deleteMap: deleteMap,
