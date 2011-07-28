@@ -58,6 +58,7 @@ var geo = function() {
       user_moved_map = true;
     });
 
+
     // Setup the info window for the user's position
     var info_window = new google.maps.InfoWindow({
       content: '<p>Current Location</p>'
@@ -85,6 +86,7 @@ var geo = function() {
 
     //load the initial points once the map has finished loading
     google.maps.event.addListener(map, 'bounds_changed', function () {
+      console.log("in bounds_changed");
       putPins(map, record_markers);
       google.maps.event.clearListeners(map, 'bounds_changed');
     });
@@ -122,12 +124,14 @@ var geo = function() {
     var ne = bounds.getNorthEast();
     var sw = bounds.getSouthWest();
 
+    $.mobile.showPageLoadingMsg();
     $.getJSON('http://'+ app.couch + "/" + app.database + '/_design/geo/_spatiallist/geojson/full?bbox=' + sw.lng() + ',' + sw.lat() + ',' + ne.lng() + ',' + ne.lat() + '&callback=?', {}, function (resp) {
       $.each(resp.features, function (i, p) {
         if (!markers[p.properties._id]) {
           markers[p.properties._id] = makePin(map, p);
         }
       });
+      $.mobile.hidePageLoadingMsg();
     });
   }
   
@@ -143,7 +147,6 @@ var geo = function() {
   }
   
   function onMapMove(lat, lon, deltaY, deltaX) {
-
     if (geo.locked) return;
     
     app.lastLocation = {
@@ -154,13 +157,11 @@ var geo = function() {
     }
 
     app.lastLocation.bbox = getBBOX(app.lastLocation);
-    
-    couch.get("http://x.ic.ht/public_art/geo?bbox=" + app.lastLocation.bbox).then(function(results) {
+    couch.get('http://'+ app.couch + '/' + app.database + '/geo?bbox=' + app.lastLocation.bbox).then(function(results) {
       putPins(results.rows.map(function(row) {
         return row.value;
       }));
     })
-    
   }
 
   return {
