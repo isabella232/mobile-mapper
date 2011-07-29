@@ -1,0 +1,17 @@
+
+#list_view_ul {
+  list-style: none;
+  width: 5000px;
+  overflow: hidden;
+  height: 400px;
+}
+#list_view_ul li {
+  float: left;
+  width: 320px;
+  height: 480px;
+  /*border: 1px solid red;*/
+}
+
+.img-wrapper img {
+  width: 320px;
+}

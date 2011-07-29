@@ -52,6 +52,7 @@ var app = function() {
     var imgs, image_path;
 
     if(mapPins.length > 0) {
+console.log(mapPins);
       $.each(mapPins, function (idx, el) {
         if(el.properties._attachments) {
           imgs = getKeys(el.properties._attachments);
@@ -59,11 +60,34 @@ var app = function() {
         } else {
           image_path = 'images/noimage.png';
         }
-        retHtml += '<li><h3>'+el.properties.title+'</h3><img src="'+image_path+'" /></li>';
+        retHtml += '<li><h3>'+el.properties.title+'</h3><span class="street_address">'+el.properties.address+'</span><div class="img-wrapper"><img src="'+image_path+'" /></div></li>';
       });
     }
     //console.log(retHtml);
     $('#list_view_ul').html(retHtml);
+    $('#list_view_ul li').first().addClass('current_work');
+    $('#list_view_ul').bind('swipeleft', function(ev) {
+      //alert('swipeleft');
+      if($('#list_view_ul .current_work').next('li').length) {
+        var delta = $('#list_view_ul .current_work').outerWidth();
+        var cur_pos = parseInt($('#list_view_ul').css('margin-left'));
+        $('#list_view_ul').animate({'margin-left': (cur_pos - delta) +'px'} , 500, function() {
+          $('#list_view_ul .current_work').removeClass('current_work').next('li').addClass('current_work');
+        });
+      }
+    });
+    
+    $('#list_view_ul').bind('swiperight', function(ev) {
+      //alert('swiperight');
+      console.log($('#list_view_ul .current_work').prev('li').length);
+      if($('#list_view_ul .current_work').prev('li').length) {
+        var delta = $('#list_view_ul .current_work').outerWidth();
+        var cur_pos = parseInt($('#list_view_ul').css('margin-left'));
+        $('#list_view_ul').animate({'margin-left': (cur_pos + delta) +'px'} , 500, function() {
+          $('#list_view_ul .current_work').removeClass('current_work').prev('li').addClass('current_work');
+        });
+      }
+    });
   }
   
   var getKeys = function(obj){
@@ -300,7 +324,13 @@ var app = function() {
   };
 
 }();
- 
+
+$('#home').live('pagecreate',function(event){
+    app.bind();
+});
+/*
 $(document).ready(function() {
+  alert('mobileinit');
   app.bind();
 });
+*/
