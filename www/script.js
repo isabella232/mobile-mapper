@@ -60,12 +60,24 @@ console.log(mapPins);
         } else {
           image_path = 'images/noimage.png';
         }
-        retHtml += '<li><h3>'+el.properties.title+'</h3><span class="street_address">'+el.properties.address+'</span><div class="img-wrapper"><img src="'+image_path+'" /></div></li>';
+        retHtml += '<li><h3>'+el.properties.title+'</h3>' +
+                    '<span class="street_address">'+el.properties.address+'</span>'+
+                    '<div class="img-wrapper"><img src="'+image_path+'" /></div>'+
+                    '<div data-role="controlgroup">'+
+                      '<a href="index.html" data-role="button" data-icon="delete">Flag</a>'+
+                      '<a href="index.html" data-role="button">Comment</a>'+
+                      '<a href="index.html" data-role="button">Like</a>'+
+                    '</div>'+
+                   '</li>';
       });
     }
-    //console.log(retHtml);
-    $('#list_view_ul').html(retHtml);
+    
+    $('#list_view_ul').html(retHtml).page();
+//    $('ul').controlgroup('refresh');
     $('#list_view_ul li').first().addClass('current_work');
+    
+    // Setup the swipe browsing events
+    // TODO: refactor these to be one function
     $('#list_view_ul').bind('swipeleft', function(ev) {
       //alert('swipeleft');
       if($('#list_view_ul .current_work').next('li').length) {
@@ -325,12 +337,7 @@ console.log(mapPins);
 
 }();
 
+// Kick this show off
 $('#home').live('pagecreate',function(event){
     app.bind();
 });
-/*
-$(document).ready(function() {
-  alert('mobileinit');
-  app.bind();
-});
-*/

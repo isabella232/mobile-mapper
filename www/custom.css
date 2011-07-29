@@ -3,7 +3,7 @@
   list-style: none;
   width: 50000px;
   overflow: hidden;
-  height: 400px;
+
   -webkit-margin-before: 0;
   -webkit-margin-after: 0;
   -webkit-margin-start: 0;
@@ -14,7 +14,6 @@
   float: left;
   width: 320px;
   height: 480px;
-  /*border: 1px solid red;*/
 }
 #list_view div.ui-content {
   margin: 0;
