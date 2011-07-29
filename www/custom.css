@@ -25,7 +25,7 @@
   line-height: 1em;
 }
 
-#list_view_ul span {
+#list_view_ul .street_address {
   font-size: 0.6em;
 }
 

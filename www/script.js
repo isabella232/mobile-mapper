@@ -63,7 +63,7 @@ console.log(mapPins);
         retHtml += '<li><h3>'+el.properties.title+'</h3>' +
                     '<span class="street_address">'+el.properties.address+'</span>'+
                     '<div class="img-wrapper"><img src="'+image_path+'" /></div>'+
-                    '<div data-role="controlgroup">'+
+                    '<div data-role="controlgroup" data-type="horizontal">'+
                       '<a href="index.html" data-role="button" data-icon="delete">Flag</a>'+
                       '<a href="index.html" data-role="button">Comment</a>'+
                       '<a href="index.html" data-role="button">Like</a>'+
@@ -102,6 +102,7 @@ console.log(mapPins);
     });
   }
   
+  // Helper function that returns all the keys for a given object
   var getKeys = function(obj){
      var keys = [];
      for(var key in obj){
