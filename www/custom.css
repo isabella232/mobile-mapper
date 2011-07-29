@@ -1,15 +1,33 @@
 
 #list_view_ul {
   list-style: none;
-  width: 5000px;
+  width: 50000px;
   overflow: hidden;
   height: 400px;
+  -webkit-margin-before: 0;
+  -webkit-margin-after: 0;
+  -webkit-margin-start: 0;
+  -webkit-margin-end: 0;
+  -webkit-padding-start: 0;
 }
 #list_view_ul li {
   float: left;
   width: 320px;
   height: 480px;
   /*border: 1px solid red;*/
+}
+#list_view div.ui-content {
+  margin: 0;
+  padding: 0;
+}
+
+#list_view_ul h3 {
+  margin: 5px 0;
+  line-height: 1em;
+}
+
+#list_view_ul span {
+  font-size: 0.6em;
 }
 
 .img-wrapper img {
