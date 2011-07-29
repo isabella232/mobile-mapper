@@ -73,7 +73,7 @@ var geo = function() {
       current_map_location = new google.maps.LatLng(current_location.latitude, current_location.longitude);
       if (!user_moved_map) {
         map.setCenter(current_map_location);
-        map.setZoom(16);
+        map.setZoom(13);
       }
       current_location_marker.setPosition(current_map_location);
       putPins(map, record_markers);
@@ -118,21 +118,26 @@ var geo = function() {
   }
 
   function putPins(map, markers) {
-    
-		var bounds = map.getBounds();
-    var ne = bounds.getNorthEast();
-    var sw = bounds.getSouthWest();
-
-    $.mobile.showPageLoadingMsg();
-    $.getJSON('http://'+ app.couch + "/" + app.database + '/_design/geo/_spatiallist/geojson/full?bbox=' + sw.lng() + ',' + sw.lat() + ',' + ne.lng() + ',' + ne.lat() + '&callback=?', {}, function (resp) {
-      $.each(resp.features, function (i, p) {
+    getData(function(locationData) {
+      $.each(locationData, function (i, p) {
         if (!markers[p.properties._id]) {
           markers[p.properties._id] = makePin(map, p);
-          // Add each point to the global list of pins
-          app.mapPins.push(p);
         }
       });
+    })
+  }
+  
+  function getData(callback) {
+    
+    var bounds = map.getBounds();
+    var ne = bounds.getNorthEast();
+    var sw = bounds.getSouthWest();
+    var bbox = [sw.lng(),sw.lat(),ne.lng(),ne.lat()].join(",");
+    
+    $.mobile.showPageLoadingMsg();
+    $.getJSON('http://'+ app.couch + "/" + app.database + '/_design/geo/_spatiallist/geojson/full?bbox=' + bbox + '&callback=?', {}, function (resp) {
       $.mobile.hidePageLoadingMsg();
+      callback(resp.features);
     });
   }
   
@@ -171,7 +176,8 @@ var geo = function() {
     putMap: putMap,
     putPins: putPins,
     deleteMap: deleteMap,
-    onMapMove: onMapMove
+    onMapMove: onMapMove,
+    getData: getData
   };
   
 }();

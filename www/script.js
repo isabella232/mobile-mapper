@@ -22,12 +22,7 @@ var app = function() {
   var bind = function() {
     handle_username_options();
     $("#add_record").bind("pagebeforeshow", configure_add_form);
-    $("#nearby_map").bind("pagebeforeshow", function() {
-      geo.getPosition().then(function(position) {
-        geo.putMap(position.coords);
-        //configure_nearby_map();
-      })
-    });
+    $("#nearby_map").bind("pagebeforeshow", setupMap);
     $("#nearby_map").bind("pagehide", function() {
       //geo.deleteMap();
     });
@@ -40,16 +35,43 @@ var app = function() {
     });
     
     $("#list_view").bind("pagebeforeshow", function() {
-      buildListView();
-      //console.log(mapPins);
+      var markerIds = [];
+      // Get the ids of the mapPins we currently have.
+      $.each(mapPins, function(idx, el) {
+        if(markerIds.indexOf(el.properties._id) !== -1) {
+          markerIds.push(el.properties._id);
+        }
+      });
+
+      geo.getData(function(resp) {
+        $.each(resp, function (i, p) {
+          if(markerIds.indexOf(p.properties._id) == -1) {
+            markerIds.push(p.properties._id);
+            // Add each point to the global list of pins
+            mapPins.push(p);
+          }
+        });
+        buildListView();
+      });
     });
     
     present_agreement();
-  }
+  };
+  
+  var setupMap = function() {
+    geo.getPosition().then(function(position) {
+      geo.putMap(position.coords);
+      //configure_nearby_map();
+    })
+  };
+  
   
   function buildListView() {
     var retHtml = '';
     var imgs, image_path;
+    var markerIds = getKeys(mapPins);
+console.log('*******');
+console.log(markerIds);
 
     if(mapPins.length > 0) {
 console.log(mapPins);
@@ -333,12 +355,14 @@ console.log(mapPins);
     mapPins: mapPins,
     database: database,
     couch: couch,
-    bind: bind
+    bind: bind,
+    setupMap: setupMap
   };
 
 }();
 
 // Kick this show off
-$('#home').live('pagecreate',function(event){
+$('#nearby_map').live('pagecreate',function(event){
     app.bind();
+    app.setupMap();
 });
