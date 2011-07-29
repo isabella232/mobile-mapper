@@ -19,21 +19,36 @@
     <script type="text/javascript" charset="utf-8" src="script.js"></script>
   </head>
   <body>
-    <div data-role="page" id="home" data-theme="d">
+    <div data-role="page" id="nearby_map" class="page-map" data-theme="d">
       <div data-role="header">
-        <h1>Mobile Mapper</h1>
-        <a href="#add_record" data-transition="slideup" class="ui-btn-right" title="Add" data-role="button">Add</a>
+        <h1>Map</h1>
+        <form action="" method="get">
+          <a id="find_me" data-icon="refresh" title="find me">X</a>
+          <label for="search"><input type="search" name="password" id="search" value="" /></label>
+        </form>
       </div>
-      <div id="index_content" data-role="content">
-        <div id="index_logo"></div>
-        <h5 id="index_intro_h">Welcome to Mobile Mapper. That is a baby sloth.</h5>
-        <p class="gen centered_t">Please read &ldquo;<strong class="hl_g">Getting Started</strong>&rdquo; for information on how to spot and record data, and for full information about the&nbsp;project.</p>
-        <ul data-role="listview" data-inset="true" data-theme="c">
-            <li><a href="#getting_started">Getting Started</a></li>
-            <li><a href="#nearby_map">Nearby Map</a></li>
-        </ul>
-        <ul id="set_username_list" data-role="listview" data-inset="true" data-theme="c">
-            <li><a href="#set_username">Set Your Username</a></li>
+      <div data-role="content">
+        <div id="map-container" style="width: 100%; height: 100%"></div>
+      </div>
+      <div data-role="footer" data-id="footer-nav" data-position="fixed">
+        <div data-role="navbar">
+          <ul>
+            <li><a href="#nearby_map" data-icon="home" title="map">map</a></li>
+          	<li><a href="#list_view" data-icon="grid">listing</a></li>
+          	<li><a href="index.html" data-icon="star">favorite</a></li>
+          	<li><a href="#add_record" data-icon="plus" data-transition="slideup" title="add artwork">add artwork</a></li>
+          	<li><a href="index.html" data-icon="search">search</a></li>
+        	</ul>
+      	</div>
+      </div>
+    </div>
+    <div data-role="page" id="list_view" data-theme="d">
+      <div data-role="header">
+        <h1>Listing</h1>
+      </div>
+      <div data-role="content">
+        <ul id="list_view_ul">
+        	
         </ul>
       </div>
       <div data-role="footer" data-id="footer-nav" data-position="fixed">
@@ -158,50 +173,7 @@
         <a href="#add_record" data-role="button" data-rel="back" data-theme="b">Cancel</a> 
       </div>
     </div>
-    <div data-role="page" id="nearby_map" class="page-map" data-theme="d">
-      <div data-role="header">
-        <h1>Map</h1>
-        <form action="" method="get">
-          <a id="find_me" data-icon="refresh" title="find me">X</a>
-          <label for="search"><input type="search" name="password" id="search" value="" /></label>
-        </form>
-      </div>
-      <div data-role="content">
-        <div id="map-container" style="width: 100%; height: 100%"></div>
-      </div>
-      <div data-role="footer" data-id="footer-nav" data-position="fixed">
-        <div data-role="navbar">
-          <ul>
-            <li><a href="#nearby_map" data-icon="home" title="map">map</a></li>
-          	<li><a href="#list_view" data-icon="grid">listing</a></li>
-          	<li><a href="index.html" data-icon="star">favorite</a></li>
-          	<li><a href="#add_record" data-icon="plus" data-transition="slideup" title="add artwork">add artwork</a></li>
-          	<li><a href="index.html" data-icon="search">search</a></li>
-        	</ul>
-      	</div>
-      </div>
-    </div>
-    <div data-role="page" id="list_view" data-theme="d">
-      <div data-role="header">
-        <h1>Listing</h1>
-      </div>
-      <div data-role="content">
-        <ul id="list_view_ul">
-        	
-        </ul>
-      </div>
-      <div data-role="footer" data-id="footer-nav" data-position="fixed">
-        <div data-role="navbar">
-          <ul>
-            <li><a href="#nearby_map" data-icon="home" title="map">map</a></li>
-          	<li><a href="#list_view" data-icon="grid">listing</a></li>
-          	<li><a href="index.html" data-icon="star">favorite</a></li>
-          	<li><a href="#add_record" data-icon="plus" data-transition="slideup" title="add artwork">add artwork</a></li>
-          	<li><a href="index.html" data-icon="search">search</a></li>
-        	</ul>
-      	</div>
-      </div>
-    </div>
+    
     
   </body>
 </html>
