@@ -70,12 +70,10 @@ var app = function() {
     var retHtml = '';
     var imgs, image_path;
     var markerIds = getKeys(mapPins);
-console.log('*******');
-console.log(markerIds);
+    var pins = mapPins.slice(0,10);
 
-    if(mapPins.length > 0) {
-console.log(mapPins);
-      $.each(mapPins, function (idx, el) {
+    if(pins.length > 0) {
+      $.each(pins, function (idx, el) {
         if(el.properties._attachments) {
           imgs = getKeys(el.properties._attachments);
           image_path = 'http://'+couch+'/'+database+'/'+el.properties._id+'/'+imgs[0];
@@ -113,7 +111,6 @@ console.log(mapPins);
     
     $('#list_view_ul').bind('swiperight', function(ev) {
       //alert('swiperight');
-      console.log($('#list_view_ul .current_work').prev('li').length);
       if($('#list_view_ul .current_work').prev('li').length) {
         var delta = $('#list_view_ul .current_work').outerWidth();
         var cur_pos = parseInt($('#list_view_ul').css('margin-left'));
