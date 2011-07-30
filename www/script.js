@@ -47,10 +47,17 @@ var app = function() {
         $.each(resp, function (i, p) {
           if(markerIds.indexOf(p.properties._id) == -1) {
             markerIds.push(p.properties._id);
+            p.properties.distance = geo.quickDist(current_location.latitude, current_location.longitude,p.geometry.coordinates[1], p.geometry.coordinates[0]);
+
             // Add each point to the global list of pins
             mapPins.push(p);
           }
         });
+        mapPins.sort(function(a, b){
+         return a.properties.distance-b.properties.distance;
+        });
+console.log('look here');
+console.log(mapPins);        
         buildListView();
       });
     });
@@ -61,7 +68,7 @@ var app = function() {
   var setupMap = function() {
     geo.getPosition().then(function(position) {
       geo.putMap(position.coords);
-      //configure_nearby_map();
+      current_location = position.coords;
     })
   };
   

@@ -136,7 +136,7 @@ var geo = function() {
     
     $.mobile.showPageLoadingMsg();
     $.getJSON('http://'+ app.couch + "/" + app.database + '/_design/geo/_spatiallist/geojson/full?bbox=' + bbox + '&callback=?', {}, function (resp) {
-      $.mobile.hidePageLoadingMsg();
+      $.mobile.hidePageLoadingMsg();      
       callback(resp.features);
     });
   }
@@ -169,6 +169,14 @@ var geo = function() {
       }));
     })
   }
+  
+  var quickDist = function(lat1, lon1, lat2, lon2) {
+    var R = 6371; // km
+    var d = Math.acos(Math.sin(lat1)*Math.sin(lat2) + 
+                      Math.cos(lat1)*Math.cos(lat2) *
+                      Math.cos(lon2-lon1)) * R;
+    return d;
+  };
 
   return {
     getPosition: getPosition,
@@ -177,7 +185,8 @@ var geo = function() {
     putPins: putPins,
     deleteMap: deleteMap,
     onMapMove: onMapMove,
-    getData: getData
+    getData: getData,
+    quickDist: quickDist
   };
   
 }();
