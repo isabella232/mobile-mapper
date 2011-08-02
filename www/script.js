@@ -94,6 +94,7 @@ var ArtFinder = {};
           }
           retHtml += '<li class="piece" id="'+el.properties._id+'"><h3>'+el.properties.title+'</h3>' +
                       '<span class="street_address">'+el.properties.address+'</span>'+
+                      '<a href="details.html?id='+el.properties._id+'" data-role="button" data-inline="true" data-icon="arrow-r">more</a>'+
                       '<div class="img-wrapper"><img src="'+image_path+'" /></div>'+
                       '<div data-role="controlgroup" data-type="horizontal">'+
                         '<a href="index.html" data-role="button" data-icon="delete">Flag</a>'+
@@ -106,12 +107,6 @@ var ArtFinder = {};
     
       $('#list_view_ul').html(retHtml).page();
     
-      // Bind click events to each piece
-      $('.piece').bind('tap', function(ev) {
-        var piece_id = this.id || 0;
-        $.mobile.changePage('details.html?id='+piece_id);
-      });
-
       $('#list_view_ul li').first().addClass('current_work');
     
       // Setup the swipe browsing events
