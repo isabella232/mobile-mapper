@@ -38,7 +38,10 @@ var ArtFinder = {};
     
       $("#list_view").bind("pagebeforeshow", function() {
         mapPins = [];
-
+        
+        // Stop the app from refreshing while we are looking at the list view
+        navigator.geolocation.clearWatch(nearby_watch);
+        
         geo.getData(function(resp) {
           $.each(resp, function (i, p) {
             // Do a quick as-the-crow-flies distance calculation
