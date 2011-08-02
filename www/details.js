@@ -38,7 +38,7 @@
           // Dump everything else onto the page
           $.each(artData, function(i, n) {
               // HACK - the following if could be done more gracefully
-              if(n != '' && i != 'title' && i != 'geometry' && i != 'id' && i != '_id' && i != '_rev' && i != 'imgs') {
+              if(n != '' && i != 'title' && i != 'geometry' && i != 'id' && i != '_id' && i != '_rev' && i != 'imgs' && i != '_attachments') {
                   detailsHtml += '<li><strong>'+i+'</strong>'+n+'</li>';
               }
           });
@@ -48,54 +48,6 @@
           $detailTarget.html(detailsHtml);
           
         });
-        
-        /*
-        $.ajax({
-            url: Muralapp.db.path+'/_design/assets/_list/jsonp/assetid?key="'+id+'"',
-            crossDomain: true,
-            dataType: 'jsonp',
-            success: function (mural, textStatus, jqXHR) {            
-                // Structure the data a bit
-                mapMuralProperties(mural);
-
-                // Set the page title
-                $(_options.detailHeader, $container).html(mural.title);
-                
-                var detailsHtml = imageHtml = '';
-                detailsHtml += '<div class="details_title">'+mural.title+'</div>';
-        
-                // This whole image handling code seems clunky
-                // imgs[0] = thumbnail
-                // imgs[1] = large main image
-                // imgs[2-n] = secondary shots
-                if(mural.imgs.length > 0) {
-                    detailsHtml += (mural.imgs[0] != "noimage.png") ? '<img src="'+mural.imgs[0]+'" />' : '';
-                    if(mural.imgs.length > 1) {
-                        for(var i=2; i < mural.imgs.length; i++) {
-                            imageHtml += '<img src="'+mural.imgs[i]+'" />';
-                        }
-                    }
-                }
-                detailsHtml += '<ul>';
-                // Dump everything else onto the page
-                $.each(mural, function(i, n) {
-                    // HACK - the following if could be done more gracefully
-                    if(n != '' && i != 'title' && i != 'geometry' && i != 'id' && i != '_id' && i != '_rev' && i != 'imgs') {
-                        detailsHtml += '<li><strong>'+i+'</strong>'+n+'</li>';
-                    }
-                });
-                detailsHtml += '<ul>';
-                detailsHtml += imageHtml;
-                detailsHtml = '<div class="details_wrapper">'+detailsHtml+'</div>';
-                $detailTarget.html(detailsHtml);
-                //$detailTarget.html($('description', $detail).text());
-                
-            },
-            error: function(xhr, status, error) {
-                console.log('server-side failure with status code ' + status);
-            }
-        });
-        */
     };
     
     //http://stackoverflow.com/questions/901115/get-querystring-values-in-javascript
@@ -130,7 +82,6 @@
     (function init() {
        //Get the id from the url
        _id = _getParameterByName('id');
-       console.log('in the deets');
        _refreshDetail(_id);
     })();
   };
