@@ -30,7 +30,7 @@
               for(img in artData._attachments) {
                 if(artData._attachments.hasOwnProperty(img)) {
                   imagePath = 'http://'+app.couch+'/'+app.database+'/'+id+'/'+img;
-                  detailsHtml += '<img class="img-wrapper" src="'+imagePath+'" />';
+                  detailsHtml += '<div class="img-wrapper"><img src="'+imagePath+'" /></div>';
                 }
               }
           }
