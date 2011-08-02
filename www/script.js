@@ -37,33 +37,28 @@ var ArtFinder = {};
       });
     
       $("#list_view").bind("pagebeforeshow", function() {
-        var markerIds = [];
-        // Get the ids of the mapPins we currently have.
-        $.each(mapPins, function(idx, el) {
-          if(markerIds.indexOf(el.properties._id) !== -1) {
-            markerIds.push(el.properties._id);
-          }
-        });
+        mapPins = [];
 
         geo.getData(function(resp) {
           $.each(resp, function (i, p) {
-            if(markerIds.indexOf(p.properties._id) == -1) {
-              markerIds.push(p.properties._id);
-              p.properties.distance = geo.quickDist(current_location.latitude, current_location.longitude,p.geometry.coordinates[1], p.geometry.coordinates[0]);
+            // Do a quick as-the-crow-flies distance calculation
+            p.properties.distance = geo.quickDist(current_location.latitude, current_location.longitude,p.geometry.coordinates[1], p.geometry.coordinates[0]);
 
-              // Add each point to the global list of pins
-              mapPins.push(p);
-            }
+            // Add each point to the global list of pins
+            mapPins.push(p);
           });
+          
+          // Sort the mapPins from closest to longest
           mapPins.sort(function(a, b){
-           return a.properties.distance-b.properties.distance;
-          });     
+           return a.properties.distance - b.properties.distance;
+          });  
+          
+          // Build the list view
           buildListView();
         });
       });
     
       $('.detail-page').live('pagebeforeshow',function(event){
-          console.log('kicking off detail-page');
           ArtFinder.Details();
       });
     
@@ -81,7 +76,6 @@ var ArtFinder = {};
     function buildListView() {
       var retHtml = '';
       var imgs, image_path;
-      var markerIds = getKeys(mapPins);
       var pins = mapPins.slice(0,10);
 
       if(pins.length > 0) {
@@ -104,14 +98,12 @@ var ArtFinder = {};
                      '</li>';
         });
       }
-    
-      $('#list_view_ul').html(retHtml).page();
-    
-      $('#list_view_ul li').first().addClass('current_work');
+      $('#list_view_ul').html(retHtml);
+      $('#list_view_ul li').page().first().addClass('current_work');
     
       // Setup the swipe browsing events
       // TODO: refactor this mess....
-      $('#list_view_ul').bind('swipeleft', function(ev) {
+      $('#list_view_ul').live('swipeleft', function(ev) {
         //alert('swipeleft');
         if($('#list_view_ul .current_work').next('li').length) {
           var delta = $('#list_view_ul .current_work').outerWidth();
@@ -122,7 +114,7 @@ var ArtFinder = {};
         }
       });
     
-      $('#list_view_ul').bind('swiperight', function(ev) {
+      $('#list_view_ul').live('swiperight', function(ev) {
         //alert('swiperight');
         if($('#list_view_ul .current_work').prev('li').length) {
           var delta = $('#list_view_ul .current_work').outerWidth();
