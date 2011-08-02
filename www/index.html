@@ -17,15 +17,16 @@
     <script type="text/javascript" charset="utf-8" src="jquery.couch2.js"></script>
     <script type="text/javascript" charset="utf-8" src="geo.js"></script>
     <script type="text/javascript" charset="utf-8" src="script.js"></script>
+    <script type="text/javascript" charset="utf-8" src="details.js"></script>
   </head>
   <body>
     <div data-role="page" id="nearby_map" class="page-map" data-theme="d">
       <div data-role="header">
         <h1>Map</h1>
-        <form action="" method="get">
+        <!--form action="" method="get">
           <a id="find_me" data-icon="refresh" title="find me">X</a>
           <label for="search"><input type="search" name="password" id="search" value="" /></label>
-        </form>
+        </form-->
       </div>
       <div data-role="content">
         <div id="map-container" style="width: 100%; height: 100%"></div>
@@ -63,6 +64,28 @@
       	</div>
       </div>
     </div>
+    
+    <div data-role="page" id="single_view" data-theme="d">
+      <div data-role="header">
+        <h1 class="artwork-title">Details</h1>
+      </div>
+      <div data-role="content">
+        <ul id="single_view_ul">
+        </ul>
+      </div>
+      <div data-role="footer" data-id="footer-nav" data-position="fixed">
+        <div data-role="navbar">
+          <ul>
+            <li><a href="#nearby_map" data-icon="home" title="map">map</a></li>
+          	<li><a href="#list_view" data-icon="grid">listing</a></li>
+          	<li><a href="index.html" data-icon="star">favorite</a></li>
+          	<li><a href="#add_record" data-icon="plus" data-transition="slideup" title="add artwork">add artwork</a></li>
+          	<li><a href="index.html" data-icon="search">search</a></li>
+        	</ul>
+      	</div>
+      </div>
+    </div>
+    
     <div data-role="page" id="agree_terms" data-theme="d">
       <div data-role="header" data-backbtn="false">
         <h1>Agreement</h1>

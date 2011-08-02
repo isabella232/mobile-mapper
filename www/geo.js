@@ -86,7 +86,7 @@ var geo = function() {
 
     //load the initial points once the map has finished loading
     google.maps.event.addListener(map, 'bounds_changed', function () {
-      console.log("in bounds_changed");
+      //console.log("in bounds_changed");
       putPins(map, record_markers);
       google.maps.event.clearListeners(map, 'bounds_changed');
     });
