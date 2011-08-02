@@ -110,7 +110,7 @@ var ArtFinder = {};
       $('#list_view_ul li').first().addClass('current_work');
     
       // Setup the swipe browsing events
-      // TODO: refactor these to be one function
+      // TODO: refactor this mess....
       $('#list_view_ul').bind('swipeleft', function(ev) {
         //alert('swipeleft');
         if($('#list_view_ul .current_work').next('li').length) {

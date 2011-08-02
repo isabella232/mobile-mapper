@@ -95,7 +95,7 @@ var geo = function() {
   function makePin(map, p) {
     var id = p.properties._id;
     
-    var content = '<div class="ibc"><h3 class="ibh">' + p.properties.title + '</h3>' + '<p class="ibhs"></p></div>';
+    var content = '<div class="ibc"><a href="details.html?id='+id+'" title="' + p.properties.title + '">' + p.properties.title + '</div>';
     var info_window = new google.maps.InfoWindow({
       content: content,
       maxWidth: 400
@@ -170,6 +170,7 @@ var geo = function() {
     })
   }
   
+  // http://www.movable-type.co.uk/scripts/latlong.html
   var quickDist = function(lat1, lon1, lat2, lon2) {
     var R = 6371; // km
     var d = Math.acos(Math.sin(lat1)*Math.sin(lat2) + 
