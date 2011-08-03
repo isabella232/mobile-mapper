@@ -10,9 +10,6 @@
         var $container = $('div[data-url*="details.html?id='+id+'"]'),
             $detailTarget = $(_options.detailTarget, $container).html('Loading...');
         
-        console.log('database = ');
-        console.log(app.couch);
-        
         $.mobile.showPageLoadingMsg();
         $.getJSON('http://'+app.couch+'/'+app.database+'/'+id+'?callback=?', function(artData) {
           var imagePath = '',
@@ -20,7 +17,7 @@
               detailsHtml = '';
           
           $.mobile.hidePageLoadingMsg();
-          console.log(artData);
+
           // Set the page title
           $(_options.detailHeader, $container).html(artData.title);
         
