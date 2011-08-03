@@ -54,6 +54,7 @@ var geo = function() {
 
     // Refresh the map pins after the map is dragged
     google.maps.event.addListener(map, 'dragend', function () {
+      console.log('dragend is kicking off');
       putPins(map, record_markers);
       user_moved_map = true;
     });
@@ -86,7 +87,7 @@ var geo = function() {
 
     //load the initial points once the map has finished loading
     google.maps.event.addListener(map, 'bounds_changed', function () {
-      //console.log("in bounds_changed");
+      console.log("bounds_changed is kicking off");
       putPins(map, record_markers);
       google.maps.event.clearListeners(map, 'bounds_changed');
     });
@@ -128,17 +129,18 @@ var geo = function() {
   }
   
   function getData(callback) {
-    
     var bounds = map.getBounds();
-    var ne = bounds.getNorthEast();
-    var sw = bounds.getSouthWest();
-    var bbox = [sw.lng(),sw.lat(),ne.lng(),ne.lat()].join(",");
+    if(bounds) {
+      var ne = bounds.getNorthEast();
+      var sw = bounds.getSouthWest();
+      var bbox = [sw.lng(),sw.lat(),ne.lng(),ne.lat()].join(",");
     
-    $.mobile.showPageLoadingMsg();
-    $.getJSON('http://'+ app.couch + "/" + app.database + '/_design/geo/_spatiallist/geojson/full?bbox=' + bbox + '&callback=?', {}, function (resp) {
-      $.mobile.hidePageLoadingMsg();      
-      callback(resp.features);
-    });
+      $.mobile.showPageLoadingMsg();
+      $.getJSON('http://'+ app.couch + "/" + app.database + '/_design/geo/_spatiallist/geojson/full?bbox=' + bbox + '&callback=?', {}, function (resp) {
+        $.mobile.hidePageLoadingMsg();      
+        callback(resp.features);
+      });
+    }
   }
   
   function deleteMap() {
