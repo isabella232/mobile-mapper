@@ -14,7 +14,7 @@ var ArtFinder = {};
   m.App = function() {
     var mapPins = [];
     var database = "public_art";
-    var couch = "x.iriscouch.com";
+    var couch = "finder.ic.ht";
     var default_location = {latitude: 37.78415, longitude: -122.43113};
     var current_location = default_location;
     var is_saving = false;
@@ -62,9 +62,43 @@ var ArtFinder = {};
       });
     
       $('.detail-page').live('pagebeforeshow',function(event){
-          ArtFinder.Details();
+        ArtFinder.Details();
       });
-    
+      
+      $('#login_button').bind('click', function(evt) {
+        evt.preventDefault();
+        var userData = {
+          password_sha: hex_sha1($('#password_field').val())
+        };
+        $.couch.db('paf_users','http://finder.ic.ht').put($('#username_field').val(), userData);
+        
+        /*
+        $.ajax('http://finder.ic.ht/_session', {
+          type: 'POST',
+          crossDomain: true,
+          data: {
+            name: $('#username_field').val(),
+            password: hex_sha1($('#password_field').val())
+          },
+          beforeSend: function( xhr ) {
+            xhr.overrideMimeType( 'application/x-www-form-urlencoded' );
+          },
+          success: function (data) {
+            console.log(data);
+          },
+          error: function (jqXHR, textStatus, errorThrown) {
+            console.log(textStatus);
+            console.log(errorThrown);
+          }
+        });
+        */
+        
+      });
+      
+      Couch.init(function() {
+        // execute on ready
+      });
+      
       present_agreement();
     };
   
@@ -72,7 +106,7 @@ var ArtFinder = {};
       geo.getPosition().then(function(position) {
         geo.putMap(position.coords);
         current_location = position.coords;
-      })
+      });
     };
   
   
@@ -94,9 +128,9 @@ var ArtFinder = {};
                       '<a href="details.html?id='+el.properties._id+'" data-role="button" data-inline="true" data-icon="arrow-r">more</a>'+
                       '<div class="img-wrapper"><img src="'+image_path+'" /></div>'+
                       '<div data-role="controlgroup" data-type="horizontal">'+
-                        '<a href="index.html" data-role="button" data-icon="delete">Flag</a>'+
+                        '<a href="index.html" data-role="button">Flag</a>'+
                         '<a href="index.html" data-role="button">Comment</a>'+
-                        '<a href="index.html" data-role="button">Like</a>'+
+                        '<a href="#" class="like-btn" data-role="button">Like</a>'+
                       '</div>'+
                      '</li>';
         });
@@ -126,6 +160,37 @@ var ArtFinder = {};
             $('#list_view_ul .current_work').removeClass('current_work').prev('li').addClass('current_work');
           });
         }
+      });
+      
+      // Like button functionality
+      // TODO: refactor the sh!t out of this.
+      $('#list_view_ul .like-btn').unbind('click').bind('click', function(ev) {
+        ev.preventDefault();
+        
+        // Get the current record
+        var piece_id = $(this).parents('li')[0].id;
+        var server = new Couch.Server('http://finder.ic.ht', 'finder', 'c4a');        
+        var db = new Couch.Database(server, 'public_art');
+        
+        db.get(piece_id, function(resp) { 
+          var cur_user = get_username();
+          
+          // Modify it
+          var cur_rec = resp;
+          var the_favorites = cur_rec.favorites || [];
+          if("anonymous" === cur_user || the_favorites.indexOf(cur_user) === -1) {
+            the_favorites.push(get_username());
+          }
+          cur_rec.favorites = the_favorites;
+          
+          // Update it
+          db.put(piece_id, cur_rec, function(saveResp) { 
+            if(saveResp.ok === true) {
+              $.mobile.changePage($('#thank_you'));
+            } 
+          });
+        });
+
       });
     }
   

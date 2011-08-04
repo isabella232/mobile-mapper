@@ -19,12 +19,13 @@
     <script type="text/javascript" charset="utf-8" src="script.js"></script>
     <script type="text/javascript" charset="utf-8" src="details.js"></script>
     <script type="text/javascript" charset="utf-8" src="user.js"></script>
+    <script type="text/javascript" charset="utf-8" src="http://finder.iriscouch.com/apps/_design/couchdb-xd/couchdb.js"></script>
   </head>
   <body>
     <div data-role="page" id="nearby_map" class="page-map" data-theme="d">
       <div data-role="header">
         <h1>Map</h1>
-        <a href="#set_username" class="ui-btn-right login-btn">login</a>
+        <a href="#set_username" class="ui-btn-right">login</a>
         <!--form action="" method="get">
           <a id="find_me" data-icon="refresh" title="find me">X</a>
           <label for="search"><input type="search" name="password" id="search" value="" /></label>
@@ -74,6 +75,28 @@
       <div data-role="content">
         <ul id="single_view_ul">
         </ul>
+      </div>
+      <div data-role="footer" data-id="footer-nav" data-position="fixed">
+        <div data-role="navbar">
+          <ul>
+            <li><a href="#nearby_map" data-icon="home" title="map">map</a></li>
+          	<li><a href="#list_view" data-icon="grid">listing</a></li>
+          	<li><a href="index.html" data-icon="star">favorite</a></li>
+          	<li><a href="#add_record" data-icon="plus" data-transition="slideup" title="add artwork">add artwork</a></li>
+          	<li><a href="index.html" data-icon="search">search</a></li>
+        	</ul>
+      	</div>
+      </div>
+    </div>
+    
+    <div data-role="page" id="thank_you" data-theme="d">
+      <div data-role="header">
+        <a class="back-btn" href="" data-rel="back">back</a>
+        <h1>Thank You!</h1>
+      </div>
+      <div data-role="content">
+        <div>Thank you for liking this art!</div>
+        <div>Wanna share it?</div>
       </div>
       <div data-role="footer" data-id="footer-nav" data-position="fixed">
         <div data-role="navbar">
