@@ -18,11 +18,13 @@
     <script type="text/javascript" charset="utf-8" src="geo.js"></script>
     <script type="text/javascript" charset="utf-8" src="script.js"></script>
     <script type="text/javascript" charset="utf-8" src="details.js"></script>
+    <script type="text/javascript" charset="utf-8" src="user.js"></script>
   </head>
   <body>
     <div data-role="page" id="nearby_map" class="page-map" data-theme="d">
       <div data-role="header">
         <h1>Map</h1>
+        <a href="#set_username" class="ui-btn-right login-btn">login</a>
         <!--form action="" method="get">
           <a id="find_me" data-icon="refresh" title="find me">X</a>
           <label for="search"><input type="search" name="password" id="search" value="" /></label>
@@ -83,6 +85,31 @@
           	<li><a href="index.html" data-icon="search">search</a></li>
         	</ul>
       	</div>
+      </div>
+    </div>
+    
+    <div data-role="page" id="login_view" data-theme="d">
+      <div data-role="header">
+        <a class="back-btn" href="" data-rel="back">back</a>
+        <h1>Login</h1>
+      </div>
+      <div data-role="content">
+        <form action="" method="post" id="login_form">
+          <div data-role="fieldcontain">
+          	<label for="username_field">Username</label>
+          	<input type="text" id="username_field" value="" />
+          </div>
+          <div data-role="fieldcontain">
+          	<label for="password_field">Password</label>
+          	<input type="password" id="password_field" value="" />
+          </div>
+          <div data-role="fieldcontain">
+          	<button type="submit" id="login_button">login</button>
+          </div>
+        </div>
+      </div>
+      <div data-role="footer" data-id="footer-nav" data-position="fixed">
+        
       </div>
     </div>
     
