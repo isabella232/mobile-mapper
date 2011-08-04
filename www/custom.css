@@ -13,7 +13,6 @@
 #list_view_ul li {
   float: left;
   width: 320px;
-  height: 480px;
 }
 #list_view div.ui-content {
   margin: 0;
