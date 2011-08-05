@@ -1,5 +1,5 @@
 
-#list_view_ul {
+#list_view_ul, #favorites_ul {
   list-style: none;
   width: 50000px;
   overflow: hidden;
@@ -10,11 +10,11 @@
   -webkit-margin-end: 0;
   -webkit-padding-start: 0;
 }
-#list_view_ul li {
+#list_view_ul li, #favorites_ul li {
   float: left;
   width: 320px;
 }
-#list_view div.ui-content {
+#list_view div.ui-content, .favorites-page div.ui-content {
   margin: 0;
   padding: 0;
 }
@@ -24,7 +24,7 @@
   line-height: 1em;
 }
 
-#list_view_ul .street_address {
+.street_address {
   font-size: 0.6em;
 }
 

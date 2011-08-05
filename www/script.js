@@ -65,6 +65,11 @@ var ArtFinder = {};
         ArtFinder.Details();
       });
       
+      $('.favorites-page').live('pagebeforeshow',function(event){        
+        ArtFinder.Favorites();
+      });
+      
+      
       $('#login_button').bind('click', function(evt) {
         evt.preventDefault();
         var userData = {
@@ -144,7 +149,7 @@ var ArtFinder = {};
         //alert('swipeleft');
         if($('#list_view_ul .current_work').next('li').length) {
           var delta = $('#list_view_ul .current_work').outerWidth();
-          var cur_pos = parseInt($('#list_view_ul').css('margin-left'));
+          var cur_pos = parseInt($('#list_view_ul').css('margin-left'));    
           $('#list_view_ul').animate({'margin-left': (cur_pos - delta) +'px'} , 500, function() {
             $('#list_view_ul .current_work').removeClass('current_work').next('li').addClass('current_work');
           });
@@ -230,7 +235,7 @@ var ArtFinder = {};
         $.mobile.changePage($('#agree_terms'), 'pop', false, false);
         $('#id_agreement_checkbox').bind('change', function () {
           window.localStorage['terms_agreed'] = true;
-          $.mobile.changePage($('#home'), 'pop', true, false);
+          $.mobile.changePage($('#nearby_map'), 'pop', true, false);
         })
       }
     }
@@ -426,7 +431,9 @@ var ArtFinder = {};
       database: database,
       couch: couch,
       bind: bind,
-      setupMap: setupMap
+      setupMap: setupMap,
+      getUsername: get_username,
+      getKeys: getKeys
     };
   };
 })(ArtFinder);
