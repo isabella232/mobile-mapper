@@ -14,8 +14,8 @@ var ArtFinder = {};
 (function(m) {
   m.App = function() {
     var mapPins = [];
-    var database = "public_art_sf";
-    var couch = "finder.ic.ht";
+    var database = Config.couchdb;
+    var couch = Config.couchhost;
     var default_location = {latitude: 37.78415, longitude: -122.43113};
     var current_location = default_location;
     var is_saving = false;
