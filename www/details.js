@@ -68,42 +68,46 @@
     
     function _bindFormHandler() {
       var $newCommentForm = $('#add_comment');
+      
       $newCommentForm.unbind('submit').bind('submit', function(ev) {
-         ev.preventDefault();
+        ev.preventDefault();
+        
+        // TODO: fix this... 
+        var HACKNAME = 'mertonium';
+        
+        var newCommentObj = {
+          artwork : _id,
+          comment   : $("#new_comment").val(),
+          comment_ts: Date.now()
+        };
+
+        // Update db
+        var server = new Couch.Server('http://'+Config.couchhost, Config.couchuser, Config.couchpword);
+        var db = new Couch.Database(server, Config.couchdb);
          
-         var HACKNAME = 'mertonium';
-         var newCommentObj = {
-           artwork : _id,
-           comment   : $("#new_comment").val(),
-           comment_ts: Date.now()
-         };
-         console.log(newCommentObj);
-         // Update db
-         var server = new Couch.Server('http://'+Config.couchhost, Config.couchuser, Config.couchpword);
-         var db = new Couch.Database(server, Config.couchdb);
-         
-         $.getJSON('http://'+app.couch+'/'+app.database+'/_design/pafCouchapp/_list/jsonp/usersbyname?key="'+HACKNAME+'"&callback=?', function(userData) {
-           console.log(userData.length);
-           if(userData.length > 0) {
-             userData = userData[0];
-             if(userData.comments) {
-               userData.comments.push(newCommentObj);
-             } else {
-               userData.comments = [newCommentObj];
-             }
-             db.put(userData._id, userData, function(resp) { 
-               console.log(resp);
-             });
-           }
-         });
-//         db.get('some-record', function(resp) { });
-                
-         // Update html
-         $(_options.commentTarget).append('<div class="comment"><span class="commenter">'+HACKNAME+'</span>'+newCommentObj.comment+'</div>');
-         $(_options.commentTarget).page();
-         // Clear form
-         $("#new_comment").val('');
-         return false;
+        $.getJSON('http://'+app.couch+'/'+app.database+'/_design/pafCouchapp/_list/jsonp/usersbyname?key="'+HACKNAME+'"&callback=?', function(userData) {
+          if(userData.length > 0) {
+            userData = userData[0];
+              if(userData.comments) {
+                userData.comments.push(newCommentObj);
+              } else {
+                userData.comments = [newCommentObj];
+              }
+              db.put(userData._id, userData, function(resp) { 
+                if(resp.ok) {
+                  // Update html
+                  $(_options.commentTarget).append('<div class="comment"><span class="commenter">'+HACKNAME+'</span>'+newCommentObj.comment+'</div>');
+                  $(_options.commentTarget).page();
+                  // Clear form
+                  $("#new_comment").val('');
+                } else {
+                  alert('There was an error saving, please try again.');
+                }
+              });
+            }
+          });
+          
+          return false;
        });
     }
     
