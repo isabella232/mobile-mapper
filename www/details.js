@@ -7,7 +7,7 @@
     }, options),
     _id;
     
-    var ignoreFields = ['title','geometry','id','_id','_rev','_attachments','comments'];
+    var ignoreFields = ['title','geometry','id','_id','_rev','_attachments','comments','doc_type','data_source'];
 
     function _refreshDetail(id) {
         var $container = $('div[data-url*="details.html?id='+id+'"]'),
@@ -54,7 +54,7 @@
           $.getJSON('http://'+app.couch+'/'+app.database+'/_design/pafCouchapp/_list/jsonp/commentsbyart?key="'+id+'"&callback=?', function(commentData) {
             if(commentData.length > 0) {
               $.each(commentData, function(i, n) {
-                commentsHtml += '<div class="comment"><span class="commenter">'+n.username+'</span>'+n.comment+'</div>';              
+                commentsHtml += '<div class="comment">'+n.comment+'<span class="commenter">'+n.username+'</span></div>';              
               });
               
               $commentTarget.html(commentsHtml);
@@ -96,7 +96,7 @@
               db.put(userData._id, userData, function(resp) { 
                 if(resp.ok) {
                   // Update html
-                  $(_options.commentTarget).append('<div class="comment"><span class="commenter">'+HACKNAME+'</span>'+newCommentObj.comment+'</div>');
+                  $(_options.commentTarget).append('<div class="comment">'+newCommentObj.comment+'<span class="commenter">'+HACKNAME+'</span></div>');
                   $(_options.commentTarget).page();
                   // Clear form
                   $("#new_comment").val('');
