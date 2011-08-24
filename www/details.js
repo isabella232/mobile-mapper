@@ -51,17 +51,44 @@
           
           // Build the comments area
           commentsHtml += '<h3>Comments</h3>';
-          if(artData.comments && artData.comments.length > 0) {
-            $.each(artData.comments, function(i, n) {
-              commentsHtml += '<div class="comment"><span class="commenter">'+n.commenter+'</span>'+n.comment+'</div>';              
-            });
-          }          
-          commentsHtml += '<form action="" id="add_comment"><div data-role="fieldcontain"><label for="new_comment">Your comment</label><textarea cols="40" rows="8" name="new_comment" id="new_comment"></textarea></div></form>';
-          $commentTarget.html(commentsHtml);
-          $commentTarget.page();
+          $.getJSON('http://'+app.couch+'/'+app.database+'/_design/pafCouchapp/_list/jsonp/commentsbyart?key="'+id+'"&callback=?', function(commentData) {
+            if(commentData.length > 0) {
+              $.each(commentData, function(i, n) {
+                commentsHtml += '<div class="comment"><span class="commenter">'+n.username+'</span>'+n.comment+'</div>';              
+              });
+              
+              $commentTarget.html(commentsHtml);
+              $commentTarget.page();
+            }
+          });
           
+          _bindFormHandler();
         });
     };
+    
+    function _bindFormHandler() {
+      var $newCommentForm = $('#add_comment');
+       console.log($newCommentForm);
+       $newCommentForm.unbind('submit').bind('submit', function(ev) {
+         ev.preventDefault();
+         
+         var newCommentObj = {
+           commenter : "mertonium",
+           comment   : $("#new_comment").val(),
+           comment_ts: Date.now()
+         };
+         console.log(newCommentObj);
+         // Update db
+         
+         
+         // Update html
+         $(_options.commentTarget).append('<div class="comment"><span class="commenter">'+newCommentObj.commenter+'</span>'+newCommentObj.comment+'</div>');
+         $(_options.commentTarget).page();
+         // Clear form
+         $("#new_comment").val('');
+         return false;
+       });
+    }
     
     //http://stackoverflow.com/questions/901115/get-querystring-values-in-javascript
     function _getParameterByName( name )

@@ -8,6 +8,7 @@
  * Licensed under GPL Version 3 license.
  * http://www.gnu.org/licenses/gpl.html
  */
+var device = device || { uuid: 'demo' };
 var ArtFinder = {};
 
 (function(m) {
