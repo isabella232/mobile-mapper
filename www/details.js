@@ -2,19 +2,24 @@
   m.Details = function(options) {
     var _options = $.extend({
       detailTarget: '.detail-container',
-      detailHeader: '.detail-header'
+      detailHeader: '.detail-header',
+      commentTarget:'.comments-container'
     }, options),
     _id;
+    
+    var ignoreFields = ['title','geometry','id','_id','_rev','_attachments','comments'];
 
     function _refreshDetail(id) {
         var $container = $('div[data-url*="details.html?id='+id+'"]'),
             $detailTarget = $(_options.detailTarget, $container).html('Loading...');
+            $commentTarget = $(_options.commentTarget, $container);
         
         $.mobile.showPageLoadingMsg();
         $.getJSON('http://'+app.couch+'/'+app.database+'/'+id+'?callback=?', function(artData) {
           var imagePath = '',
               imageHtml = '',
-              detailsHtml = '';
+              detailsHtml = '',
+              commentsHtml = '';
           
           $.mobile.hidePageLoadingMsg();
 
@@ -35,7 +40,7 @@
           // Dump everything else onto the page
           $.each(artData, function(i, n) {
               // HACK - the following if could be done more gracefully
-              if(n != '' && i != 'title' && i != 'geometry' && i != 'id' && i != '_id' && i != '_rev' && i != 'imgs' && i != '_attachments') {
+              if(n != '' && ignoreFields.indexOf(i) == -1) {
                   detailsHtml += '<li><strong>'+i+'</strong>'+n+'</li>';
               }
           });
@@ -43,6 +48,17 @@
           detailsHtml += imageHtml;
           detailsHtml = '<div class="details_wrapper">'+detailsHtml+'</div>';
           $detailTarget.html(detailsHtml);
+          
+          // Build the comments area
+          commentsHtml += '<h3>Comments</h3>';
+          if(artData.comments && artData.comments.length > 0) {
+            $.each(artData.comments, function(i, n) {
+              commentsHtml += '<div class="comment"><span class="commenter">'+n.commenter+'</span>'+n.comment+'</div>';              
+            });
+          }          
+          commentsHtml += '<form action="" id="add_comment"><div data-role="fieldcontain"><label for="new_comment">Your comment</label><textarea cols="40" rows="8" name="new_comment" id="new_comment"></textarea></div></form>';
+          $commentTarget.html(commentsHtml);
+          $commentTarget.page();
           
         });
     };
