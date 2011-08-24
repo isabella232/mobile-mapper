@@ -12,21 +12,39 @@ var ArtFinder = {};
 
 (function(m) {
   m.App = function() {
+    // Array of artwork objects
     var mapPins = [];
+    
+    // Name of the couchdb database
     var database = "public_art";
+    
+    // Domain name where the couchdb instance can be accessed
     var couch = "finder.ic.ht";
+    
+    // If the user's position cannot be determined, this lat/lng is used as the map center
     var default_location = {latitude: 37.78415, longitude: -122.43113};
+    
+    // Holds the users current location data
     var current_location = default_location;
+    
+    // Boolean to prohibit a record from being saved twice
     var is_saving = false;
+    
+    // Var to keep track of our nearby navigator.geolocation watch
     var nearby_watch;
+    
+    // Var to keep track of our navigator.geolocation watch when adding a record
     var add_record_watch;
   
+    // Wrap up all our initial bindings
     var bind = function() {
+      
       handle_username_options();
+      
       $("#add_record").bind("pagebeforeshow", configure_add_form);
       $("#nearby_map").bind("pagebeforeshow", setupMap);
       $("#nearby_map").bind("pagehide", function() {
-        //geo.deleteMap();
+        navigator.geolocation.clearWatch(nearby_watch);
       });
       $("#add_record").bind("pagehide", function() {
         navigator.geolocation.clearWatch(add_record_watch);
@@ -38,9 +56,6 @@ var ArtFinder = {};
     
       $("#list_view").bind("pagebeforeshow", function() {
         mapPins = [];
-        
-        // Stop the app from refreshing while we are looking at the list view
-        navigator.geolocation.clearWatch(nearby_watch);
         
         geo.getData(function(resp) {
           $.each(resp, function (i, p) {
@@ -104,6 +119,7 @@ var ArtFinder = {};
         // execute on ready
       });
       
+      // First check that the user has agreed to the terms & conditions
       present_agreement();
     };
   
