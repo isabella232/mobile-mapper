@@ -26,7 +26,7 @@ var ArtFinder = {};
       $("#add_record").bind("pagebeforeshow", configure_add_form);
       $("#nearby_map").bind("pagebeforeshow", setupMap);
       $("#nearby_map").bind("pagehide", function() {
-        //geo.deleteMap();
+        navigator.geolocation.clearWatch(nearby_watch);
       });
       $("#add_record").bind("pagehide", function() {
         navigator.geolocation.clearWatch(add_record_watch);
@@ -38,9 +38,6 @@ var ArtFinder = {};
     
       $("#list_view").bind("pagebeforeshow", function() {
         mapPins = [];
-        
-        // Stop the app from refreshing while we are looking at the list view
-        navigator.geolocation.clearWatch(nearby_watch);
         
         geo.getData(function(resp) {
           $.each(resp, function (i, p) {
