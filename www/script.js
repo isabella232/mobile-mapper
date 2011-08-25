@@ -187,8 +187,8 @@ var ArtFinder = {};
         
         // Get the current record
         var piece_id = $(this).parents('li')[0].id;
-        var server = new Couch.Server('http://finder.ic.ht', 'finder', 'c4a');        
-        var db = new Couch.Database(server, 'public_art_sf');
+        var server = new Couch.Server('http://'+Config.couchhost, Config.couchuser, Config.couchpword);
+        var db = new Couch.Database(server, Config.couchdb);
         
         db.get(piece_id, function(resp) { 
           var cur_user = get_username();
