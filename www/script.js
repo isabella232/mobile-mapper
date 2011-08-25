@@ -238,8 +238,8 @@ var ArtFinder = {};
         // If not, we create the record.
         if (val) {
           $.getJSON('http://'+app.couch+'/'+app.database+'/_design/pafCouchapp/_list/jsonp/usersbyname?key="'+val+'"&callback=?', function(userData) {
-            console.log(userData);
-            console.log(device.uuid);
+            //console.log(userData);
+            //console.log(device.uuid);
             if(userData.length > 0) {
               userData = userData[0];
               if(userData._id === device.uuid) {
@@ -255,7 +255,7 @@ var ArtFinder = {};
               var server = new Couch.Server('http://'+Config.couchhost, Config.couchuser, Config.couchpword);
               var db = new Couch.Database(server, Config.couchdb);
               db.post(userData, function(resp) {
-                console.log(resp);
+                //console.log(resp);
                 if(resp.ok) {
                   set_username(val);
                 } else {

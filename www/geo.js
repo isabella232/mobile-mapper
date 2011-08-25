@@ -54,7 +54,7 @@ var geo = function() {
 
     // Refresh the map pins after the map is dragged
     google.maps.event.addListener(map, 'dragend', function () {
-      console.log('dragend is kicking off');
+      //console.log('dragend is kicking off');
       putPins(map, record_markers);
       user_moved_map = true;
     });
@@ -87,7 +87,7 @@ var geo = function() {
 
     //load the initial points once the map has finished loading
     google.maps.event.addListener(map, 'bounds_changed', function () {
-      console.log("bounds_changed is kicking off");
+      //console.log("bounds_changed is kicking off");
       putPins(map, record_markers);
       google.maps.event.clearListeners(map, 'bounds_changed');
     });
