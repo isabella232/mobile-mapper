@@ -58,6 +58,11 @@ var ArtFinder = {};
           buildListView();
         });
       });
+      
+      $('#list_view').bind('pagehide', function() {
+        $('#list_view_ul').empty();
+        $('#list_view_ul').css('margin-left','0');
+      });
     
       $('.detail-page').live('pagebeforeshow',function(event){
         ArtFinder.Details();
@@ -126,45 +131,58 @@ var ArtFinder = {};
           } else {
             image_path = 'images/noimage.png';
           }
-          retHtml += '<li class="piece" id="'+el.properties._id+'" style="width:'+$(window).width()+'px;"><h3>'+el.properties.title+'</h3>' +
+          retHtml += '<li class="piece" id="'+el.properties._id+'" style="width:'+$(window).width()+'px;">' +
+                      '<div class="list-view-header">' +
+                      '<h3>'+el.properties.title+'</h3>' +
                       '<span class="street_address">'+el.properties.address+'</span>'+
-                      '<a href="details.html?id='+el.properties._id+'" data-role="button" data-inline="true" data-icon="arrow-r">more</a>'+
+                      '</div>'+
                       '<div class="img-wrapper"><img src="'+image_path+'" /></div>'+
                       '<div data-role="controlgroup" data-type="horizontal">'+
                         '<a href="index.html" data-role="button">Flag</a>'+
                         '<a href="index.html" data-role="button">Comment</a>'+
-                        '<a href="#" class="like-btn" data-role="button">Like</a>'+
+                        '<a href="#" class="like-btn" data-role="button">Favorite</a>'+
                       '</div>'+
                      '</li>';
         });
       }
       $('#list_view_ul').html(retHtml);
       $('#list_view_ul li').page().first().addClass('current_work');
-    
+      $('#list_view_more_link').bind('tap', function(ev) {
+        //attr('href','details.html?id='+$('.current_work').attr('id'));
+        var go_to_id = $('.current_work').attr('id');
+        if(go_to_id) {
+          $.mobile.changePage('details.html?id='+go_to_id);
+        } else {
+          console.error($('.current_work'));
+        }
+      });
       // Setup the swipe browsing events
       // TODO: refactor this mess....
-      $('#list_view_ul').live('swipeleft', function(ev) {
-        //alert('swipeleft');
-        if($('#list_view_ul .current_work').next('li').length) {
-          var delta = $('#list_view_ul .current_work').outerWidth();
-          var cur_pos = parseInt($('#list_view_ul').css('margin-left'));    
-          $('#list_view_ul').animate({'margin-left': (cur_pos - delta) +'px'} , 500, function() {
-            $('#list_view_ul .current_work').removeClass('current_work').next('li').addClass('current_work');
-          });
-        }
-      });
-    
-      $('#list_view_ul').live('swiperight', function(ev) {
-        //alert('swiperight');
-        if($('#list_view_ul .current_work').prev('li').length) {
-          var delta = $('#list_view_ul .current_work').outerWidth();
-          var cur_pos = parseInt($('#list_view_ul').css('margin-left'));
-          $('#list_view_ul').animate({'margin-left': (cur_pos + delta) +'px'} , 500, function() {
-            $('#list_view_ul .current_work').removeClass('current_work').prev('li').addClass('current_work');
-          });
-        }
-      });
-      
+       $('#list_view_ul').live('swipeleft', function(ev) {
+         //alert('swipeleft');
+         if($('#list_view_ul .current_work').next('li').length) {
+           var delta = $('#list_view_ul .current_work').outerWidth();
+           var cur_pos = parseInt($('#list_view_ul').css('margin-left'));
+
+           $('#list_view_ul').animate({'margin-left': (cur_pos - delta) +'px'} , 500, function() {
+             $('#list_view_ul .current_work').removeClass('current_work').next('li').addClass('current_work');
+             //$('#list_view_more_link').attr('href','details.html?id='+$('.current_work').attr('id'));
+           });
+         }
+       });
+     
+       $('#list_view_ul').live('swiperight', function(ev) {
+         //alert('swiperight');
+         if($('#list_view_ul .current_work').prev('li').length) {
+           var delta = $('#list_view_ul .current_work').outerWidth();
+           var cur_pos = parseInt($('#list_view_ul').css('margin-left'));
+           $('#list_view_ul').animate({'margin-left': (cur_pos + delta) +'px'} , 500, function() {
+             $('#list_view_ul .current_work').removeClass('current_work').prev('li').addClass('current_work');
+             //$('#list_view_more_link').attr('href','details.html?id='+$('.current_work').attr('id'));
+           });
+         }
+       });
+       
       // Like button functionality
       // TODO: refactor the sh!t out of this.
       $('#list_view_ul .like-btn').unbind('click').bind('click', function(ev) {
