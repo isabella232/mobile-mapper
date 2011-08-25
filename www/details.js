@@ -7,7 +7,13 @@
     }, options),
     _id;
     
+    // Array of fields to ignore when dumping all the data to the screen
     var ignoreFields = ['title','geometry','id','_id','_rev','_attachments','comments','doc_type','data_source'];
+    
+    // Setup DB stuff for writing
+    var server = new Couch.Server('http://'+Config.couchhost, Config.couchuser, Config.couchpword);
+    var db = new Couch.Database(server, Config.couchdb);
+    
 
     function _refreshDetail(id) {
         var $container = $('div[data-url*="details.html?id='+id+'"]'),
@@ -56,10 +62,11 @@
               $.each(commentData, function(i, n) {
                 commentsHtml += '<div class="comment">'+n.comment+'<span class="commenter">'+n.username+'</span></div>';              
               });
-              
-              $commentTarget.html(commentsHtml);
-              $commentTarget.page();
+            } else {
+              commentsHtml += '<div class="no-comments">There is currently no discussion on this piece.</div>';
             }
+            $commentTarget.html(commentsHtml);
+            $commentTarget.page();
           });
           
           _bindFormHandler();
@@ -72,20 +79,15 @@
       $newCommentForm.unbind('submit').bind('submit', function(ev) {
         ev.preventDefault();
         
-        // TODO: fix this... 
-        var HACKNAME = 'mertonium';
+        var curUser = app.getUsername();
         
         var newCommentObj = {
           artwork : _id,
           comment   : $("#new_comment").val(),
           comment_ts: Date.now()
         };
-
-        // Update db
-        var server = new Couch.Server('http://'+Config.couchhost, Config.couchuser, Config.couchpword);
-        var db = new Couch.Database(server, Config.couchdb);
-         
-        $.getJSON('http://'+app.couch+'/'+app.database+'/_design/pafCouchapp/_list/jsonp/usersbyname?key="'+HACKNAME+'"&callback=?', function(userData) {
+ 
+        $.getJSON('http://'+app.couch+'/'+app.database+'/_design/pafCouchapp/_list/jsonp/usersbyname?key="'+curUser+'"&callback=?', function(userData) {
           if(userData.length > 0) {
             userData = userData[0];
               if(userData.comments) {
@@ -93,10 +95,12 @@
               } else {
                 userData.comments = [newCommentObj];
               }
+              
+              // Update db
               db.put(userData._id, userData, function(resp) { 
                 if(resp.ok) {
                   // Update html
-                  $(_options.commentTarget).append('<div class="comment">'+newCommentObj.comment+'<span class="commenter">'+HACKNAME+'</span></div>');
+                  $(_options.commentTarget).append('<div class="comment">'+newCommentObj.comment+'<span class="commenter">'+curUser+'</span></div>');
                   $(_options.commentTarget).page();
                   // Clear form
                   $("#new_comment").val('');

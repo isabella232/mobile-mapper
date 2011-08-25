@@ -8,7 +8,7 @@
  * Licensed under GPL Version 3 license.
  * http://www.gnu.org/licenses/gpl.html
  */
-var device = device || { uuid: 'demo' };
+var device = device || { uuid: 'Xfa4adf4da3637c1ba4f6571ca40b43cd' };
 var ArtFinder = {};
 
 (function(m) {
@@ -211,19 +211,57 @@ var ArtFinder = {};
     function handle_username_options() {
       if (get_username() === 'anonymous') {
         $('#set_username_list').show();
+      } else {
+        set_username(get_username());
       }
       $('#set_username_form').unbind('submit').bind('submit', function (e) {
         e.preventDefault();
         var val = $('#id_username').val();
-        window.localStorage['username'] = (val) ? val : 'anonymous';
+        
+        // Check if this username is already in the db. 
+        // If it is, the we see if the uuids match. 
+        // If not, we create the record.
         if (val) {
+          $.getJSON('http://'+app.couch+'/'+app.database+'/_design/pafCouchapp/_list/jsonp/usersbyname?key="'+val+'"&callback=?', function(userData) {
+            console.log(userData);
+            console.log(device.uuid);
+            if(userData.length > 0) {
+              userData = userData[0];
+              if(userData._id === device.uuid) {
+                set_username(val);
+              }
+            } else {
+              userData = {
+                _id: device.uuid,
+                doc_type: 'user',
+                username: val
+              };
+              
+              var server = new Couch.Server('http://'+Config.couchhost, Config.couchuser, Config.couchpword);
+              var db = new Couch.Database(server, Config.couchdb);
+              db.post(userData, function(resp) {
+                console.log(resp);
+                if(resp.ok) {
+                  set_username(val);
+                } else {
+                  // TODO: Something else...
+                }
+              });
+            }
+          });
+          
           $('#set_username_list').hide();
         }
+        
         history.back();
         return false;
       });
     }
 
+    function set_username(uname) {
+      window.localStorage['username'] = uname;
+      $('#set_username_btn .ui-btn-text').text(uname);
+    }
     function get_username() {
       return (window.localStorage['username']) ? window.localStorage['username'] : 'anonymous';
     }
