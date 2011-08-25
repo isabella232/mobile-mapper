@@ -146,43 +146,40 @@ var ArtFinder = {};
         });
       }
       $('#list_view_ul').html(retHtml);
+      
+      // Make the list refresh (so jQuery UI runs on it) and make the first item the current item
       $('#list_view_ul li').page().first().addClass('current_work');
+      
+      // Link up the "more info" button to the current piece of art
       $('#list_view_more_link').bind('tap', function(ev) {
         //attr('href','details.html?id='+$('.current_work').attr('id'));
         var go_to_id = $('.current_work').attr('id');
         if(go_to_id) {
           $.mobile.changePage('details.html?id='+go_to_id);
-        } else {
-          console.error($('.current_work'));
-        }
+        } 
       });
+      
       // Setup the swipe browsing events
-      // TODO: refactor this mess....
-       $('#list_view_ul').live('swipeleft', function(ev) {
-         //alert('swipeleft');
-         if($('#list_view_ul .current_work').next('li').length) {
-           var delta = $('#list_view_ul .current_work').outerWidth();
-           var cur_pos = parseInt($('#list_view_ul').css('margin-left'));
+      $('#list_view_ul').live('swipeleft swiperight', function(ev) {
+        //event.type
+        var $currentWork = $(this).find('.current_work');
+        var delta = $currentWork.outerWidth();
+        var cur_pos = parseInt($('#list_view_ul').css('margin-left'));
+        var possible = (ev.type == 'swipeleft') ? $currentWork.next('li').length : $currentWork.prev('li').length;
+        var new_pos = (ev.type == 'swipeleft') ? (cur_pos - delta) : (cur_pos + delta);
 
-           $('#list_view_ul').animate({'margin-left': (cur_pos - delta) +'px'} , 500, function() {
-             $('#list_view_ul .current_work').removeClass('current_work').next('li').addClass('current_work');
-             //$('#list_view_more_link').attr('href','details.html?id='+$('.current_work').attr('id'));
-           });
-         }
-       });
-     
-       $('#list_view_ul').live('swiperight', function(ev) {
-         //alert('swiperight');
-         if($('#list_view_ul .current_work').prev('li').length) {
-           var delta = $('#list_view_ul .current_work').outerWidth();
-           var cur_pos = parseInt($('#list_view_ul').css('margin-left'));
-           $('#list_view_ul').animate({'margin-left': (cur_pos + delta) +'px'} , 500, function() {
-             $('#list_view_ul .current_work').removeClass('current_work').prev('li').addClass('current_work');
-             //$('#list_view_more_link').attr('href','details.html?id='+$('.current_work').attr('id'));
-           });
-         }
-       });
-       
+        if(possible) {
+          $(this).animate({'margin-left': new_pos +'px'} , 500, function() {            
+            if(ev.type == 'swipeleft') {
+              $currentWork.removeClass('current_work').next('li').addClass('current_work');
+            } else {
+              $currentWork.removeClass('current_work').prev('li').addClass('current_work');
+            }
+          });
+        }
+
+      });
+            
       // Like button functionality
       // TODO: refactor the sh!t out of this.
       $('#list_view_ul .like-btn').unbind('click').bind('click', function(ev) {
