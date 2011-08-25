@@ -126,7 +126,7 @@ var ArtFinder = {};
           } else {
             image_path = 'images/noimage.png';
           }
-          retHtml += '<li class="piece" id="'+el.properties._id+'"><h3>'+el.properties.title+'</h3>' +
+          retHtml += '<li class="piece" id="'+el.properties._id+'" style="width:'+$(window).width()+'px;"><h3>'+el.properties.title+'</h3>' +
                       '<span class="street_address">'+el.properties.address+'</span>'+
                       '<a href="details.html?id='+el.properties._id+'" data-role="button" data-inline="true" data-icon="arrow-r">more</a>'+
                       '<div class="img-wrapper"><img src="'+image_path+'" /></div>'+

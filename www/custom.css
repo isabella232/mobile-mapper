@@ -12,7 +12,7 @@
 }
 #list_view_ul li, #favorites_ul li {
   float: left;
-  width: 320px;
+  /*width: 320px;*/
 }
 #list_view div.ui-content, .favorites-page div.ui-content {
   margin: 0;
