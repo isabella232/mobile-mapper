@@ -1,10 +1,15 @@
 var geo = function() {
   var map;
-  function getPosition() {
+  var user_moved_map = false;
+  var current_loc_icon = new google.maps.MarkerImage('images/current_location_icon.png', null, null, null, new google.maps.Size(12, 12));
+  var current_location_marker = null;
+  var record_markers = {};
+
+  function getPosition(callback) {
     var dfd = $.Deferred();
     navigator.geolocation.getCurrentPosition(
-      function(position) { dfd.resolve(position) },
-      function(error) { dfd.resolve({coords: {latitude: 37.7749295, longitude: -122.4194155}}) },
+      function(coords) { dfd.resolve(coords); } ,
+      function(error) { console.log(error); dfd.resolve({coords: {latitude: 37.7749295, longitude: -122.4194155}}) },
       { maximumAge:600000, timeout: 10000}
     )
     //dfd.resolve({coords: {latitude: 37.7749295, longitude: -122.4194155}});
@@ -27,8 +32,7 @@ var geo = function() {
     setTimeout(function() { geo.locked = false; }, 1000);
     geo.locked = true;
     
-    var user_moved_map = false;
-    var record_markers = {};
+    record_markers = {};
     
     // Set center of map to the coordinates passed in
     var current_map_location = new google.maps.LatLng(coords.latitude, coords.longitude);
@@ -45,8 +49,8 @@ var geo = function() {
     map = new google.maps.Map(document.getElementById("map-container"), map_options);
     
     // Create marker for the user's position on the map
-    var current_loc_icon = new google.maps.MarkerImage('images/current_location_icon.png', null, null, null, new google.maps.Size(12, 12));
-    var current_location_marker = new google.maps.Marker({
+    
+    current_location_marker = new google.maps.Marker({
       map: map,
       draggable: false,
       position: current_map_location,
@@ -60,7 +64,6 @@ var geo = function() {
       user_moved_map = true;
     });
 
-
     // Setup the info window for the user's position
     var info_window = new google.maps.InfoWindow({
       content: '<p>Current Location</p>'
@@ -68,9 +71,18 @@ var geo = function() {
     google.maps.event.addListener(current_location_marker, 'click', function (location) {
       info_window.open(map, current_location_marker);
     });
-
-    // Setup the watch method to follow the user if they are moving
-    nearby_watch = navigator.geolocation.watchPosition(function (pos) {
+    
+    //load the initial points once the map has finished loading
+    google.maps.event.addListener(map, 'bounds_changed', function () {
+      //console.log("bounds_changed is kicking off");
+      putPins(map, record_markers);
+      google.maps.event.clearListeners(map, 'bounds_changed');
+    });
+  }
+  
+  // Setup the watch method to follow the user if they are moving
+  function getWatch() {
+    return navigator.geolocation.watchPosition(function (pos) {
       current_location = pos.coords
       current_map_location = new google.maps.LatLng(current_location.latitude, current_location.longitude);
       if (!user_moved_map) {
@@ -87,14 +99,7 @@ var geo = function() {
       }
     }, {
       enableHighAccuracy: true,
-      maximumAge: 30000
-    });
-
-    //load the initial points once the map has finished loading
-    google.maps.event.addListener(map, 'bounds_changed', function () {
-      //console.log("bounds_changed is kicking off");
-      putPins(map, record_markers);
-      google.maps.event.clearListeners(map, 'bounds_changed');
+      maximumAge: 90000
     });
   }
   
@@ -194,7 +199,8 @@ var geo = function() {
     deleteMap: deleteMap,
     onMapMove: onMapMove,
     getData: getData,
-    quickDist: quickDist
+    quickDist: quickDist,
+    getWatch: getWatch
   };
   
 }();
