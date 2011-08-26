@@ -5,8 +5,9 @@ var geo = function() {
     navigator.geolocation.getCurrentPosition(
       function(position) { dfd.resolve(position) },
       function(error) { dfd.resolve({coords: {latitude: 37.7749295, longitude: -122.4194155}}) },
-      {maximumAge:600000}
+      { maximumAge:600000, timeout: 10000}
     )
+    //dfd.resolve({coords: {latitude: 37.7749295, longitude: -122.4194155}});
     return dfd.promise();
   }
   
@@ -79,7 +80,11 @@ var geo = function() {
       current_location_marker.setPosition(current_map_location);
       putPins(map, record_markers);
     }, function () {
-      navigator.notification.alert("Geolocation service failed to determine your location.", $.noop, "GPS Failure");
+      if(navigator.notification) { 
+        navigator.notification.alert("Geolocation service failed to determine your location.", $.noop, "GPS Failure");
+      } else {
+        alert("Geolocation service failed to determine your location.");
+      }
     }, {
       enableHighAccuracy: true,
       maximumAge: 30000
