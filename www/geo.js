@@ -4,6 +4,7 @@ var geo = function() {
   var current_loc_icon = new google.maps.MarkerImage('images/current_location_icon.png', null, null, null, new google.maps.Size(12, 12));
   var current_location_marker = null;
   var record_markers = {};
+  var data_cache = { bbox: '', features: {} };
 
   function getPosition() {
     var dfd = $.Deferred();
@@ -144,12 +145,19 @@ var geo = function() {
       var ne = bounds.getNorthEast();
       var sw = bounds.getSouthWest();
       var bbox = [sw.lng(),sw.lat(),ne.lng(),ne.lat()].join(",");
-    
-      $.mobile.showPageLoadingMsg();
-      $.getJSON('http://'+ app.couch + "/" + app.database + '/_design/geo/_spatiallist/geojson/full?bbox=' + bbox + '&callback=?', {}, function (resp) {
-        $.mobile.hidePageLoadingMsg();      
-        callback(resp.features);
-      });
+      
+      // See if we already have the features for the given bbox
+      if(bbox != data_cache.bbox) {
+        data_cache.bbox = bbox;        
+        $.mobile.showPageLoadingMsg();
+        $.getJSON('http://'+ app.couch + "/" + app.database + '/_design/geo/_spatiallist/geojson/full?bbox=' + bbox + '&callback=?', {}, function (resp) {
+          $.mobile.hidePageLoadingMsg();      
+          data_cache.features = resp.features;
+          callback(resp.features);
+        });
+      } else {
+        callback(data_cache.features);
+      }
     }
   }
   

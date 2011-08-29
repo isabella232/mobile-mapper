@@ -52,7 +52,7 @@ var ArtFinder = {};
       });
     
       $("#list_view").bind("pagebeforeshow", function() {
-        mapPins = [];
+        //mapPins = [];
         
         geo.getData(function(resp) {
           $.each(resp, function (i, p) {
@@ -76,7 +76,7 @@ var ArtFinder = {};
       
       $('#list_view').bind('pagehide', function() {
         //$('#list_view_ul').empty();
-        $('#list_view_ul').css('margin-left','0');
+        //$('#list_view_ul').css('margin-left','0');
       });
     
       $('.detail-page').live('pagebeforeshow',function(event){
@@ -195,7 +195,12 @@ var ArtFinder = {};
       $('#list_view_ul').html(retHtml);
       
       // Make the list refresh (so jQuery UI runs on it) and make the first item the current item
-      $('#list_view_ul li').page().first().addClass('current_work');
+      $('#list_view_ul li').page();
+      
+      if($('.current_work').length == 0) {
+        console.log('HHHEEEELLLLLLLLOOOOO');
+        $('#list_view_ul li').first().addClass('current_work');
+      }
             
       // Like button functionality
       // TODO: refactor the sh!t out of this.
