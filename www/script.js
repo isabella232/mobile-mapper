@@ -8,20 +8,17 @@
  * Licensed under GPL Version 3 license.
  * http://www.gnu.org/licenses/gpl.html
  */
+var device = device || { uuid: 'Xfa4adf4da3637c1ba4f6571ca40b43cd' };
 var ArtFinder = {};
 
 (function(m) {
   m.App = function() {
     // Array of artwork objects
     var mapPins = [];
-    
-    // Name of the couchdb database
-    var database = "public_art";
-    
-    // Domain name where the couchdb instance can be accessed
-    var couch = "finder.ic.ht";
-    
-    // If the user's position cannot be determined, this lat/lng is used as the map center
+
+    var database = Config.couchdb;
+    var couch = Config.couchhost;
+
     var default_location = {latitude: 37.78415, longitude: -122.43113};
     
     // Holds the users current location data
@@ -72,8 +69,14 @@ var ArtFinder = {};
           });  
           
           // Build the list view
+          console.log('calling buildListView');
           buildListView();
         });
+      });
+      
+      $('#list_view').bind('pagehide', function() {
+        //$('#list_view_ul').empty();
+        $('#list_view_ul').css('margin-left','0');
       });
     
       $('.detail-page').live('pagebeforeshow',function(event){
@@ -82,6 +85,35 @@ var ArtFinder = {};
       
       $('.favorites-page').live('pagebeforeshow',function(event){        
         ArtFinder.Favorites();
+      });
+      
+      // Link up the "more info" button to the current piece of art
+      $('#list_view_more_link').bind('tap', function(ev) {
+        
+        ev.preventDefault();
+        var go_to_id = $('.current_work').attr('id');
+        if(go_to_id) {
+          $.mobile.changePage('details.html?id='+go_to_id);
+        } 
+      });
+      
+      // Setup the swipe browsing events
+      $('#list_view_ul').live('swipeleft swiperight', function(ev) {
+        //event.type
+        var $currentWork = $(this).find('.current_work');
+        var delta = $currentWork.outerWidth();
+        var cur_pos = parseInt($('#list_view_ul').css('margin-left'), 10);
+        var possible = (ev.type == 'swipeleft') ? $currentWork.next('li').length : $currentWork.prev('li').length;
+        var new_pos = (ev.type == 'swipeleft') ? (cur_pos - delta) : (cur_pos + delta);
+
+        if(possible) {
+          if(ev.type == 'swipeleft') {
+            $currentWork.removeClass('current_work').next('li').addClass('current_work');
+          } else {
+            $currentWork.removeClass('current_work').prev('li').addClass('current_work');
+          }
+          $(this).animate({'margin-left': new_pos +'px'} , 500, function() {    });
+        }
       });
       
       
@@ -144,45 +176,25 @@ var ArtFinder = {};
           } else {
             image_path = 'images/noimage.png';
           }
-          retHtml += '<li class="piece" id="'+el.properties._id+'"><h3>'+el.properties.title+'</h3>' +
+          retHtml += '<li class="piece" id="'+el.properties._id+'" style="width:'+$(window).width()+'px;">' +
+                      '<div class="list-view-header">' +
+                      '<h3>'+el.properties.title+'</h3>' +
                       '<span class="street_address">'+el.properties.address+'</span>'+
-                      '<a href="details.html?id='+el.properties._id+'" data-role="button" data-inline="true" data-icon="arrow-r">more</a>'+
+                      '</div>'+
                       '<div class="img-wrapper"><img src="'+image_path+'" /></div>'+
                       '<div data-role="controlgroup" data-type="horizontal">'+
                         '<a href="index.html" data-role="button">Flag</a>'+
                         '<a href="index.html" data-role="button">Comment</a>'+
-                        '<a href="#" class="like-btn" data-role="button">Like</a>'+
+                        '<a href="#" class="like-btn" data-role="button">Favorite</a>'+
                       '</div>'+
                      '</li>';
         });
       }
       $('#list_view_ul').html(retHtml);
-      $('#list_view_ul li').page().first().addClass('current_work');
-    
-      // Setup the swipe browsing events
-      // TODO: refactor this mess....
-      $('#list_view_ul').live('swipeleft', function(ev) {
-        //alert('swipeleft');
-        if($('#list_view_ul .current_work').next('li').length) {
-          var delta = $('#list_view_ul .current_work').outerWidth();
-          var cur_pos = parseInt($('#list_view_ul').css('margin-left'));    
-          $('#list_view_ul').animate({'margin-left': (cur_pos - delta) +'px'} , 500, function() {
-            $('#list_view_ul .current_work').removeClass('current_work').next('li').addClass('current_work');
-          });
-        }
-      });
-    
-      $('#list_view_ul').live('swiperight', function(ev) {
-        //alert('swiperight');
-        if($('#list_view_ul .current_work').prev('li').length) {
-          var delta = $('#list_view_ul .current_work').outerWidth();
-          var cur_pos = parseInt($('#list_view_ul').css('margin-left'));
-          $('#list_view_ul').animate({'margin-left': (cur_pos + delta) +'px'} , 500, function() {
-            $('#list_view_ul .current_work').removeClass('current_work').prev('li').addClass('current_work');
-          });
-        }
-      });
       
+      // Make the list refresh (so jQuery UI runs on it) and make the first item the current item
+      $('#list_view_ul li').page().first().addClass('current_work');
+            
       // Like button functionality
       // TODO: refactor the sh!t out of this.
       $('#list_view_ul .like-btn').unbind('click').bind('click', function(ev) {
@@ -190,8 +202,8 @@ var ArtFinder = {};
         
         // Get the current record
         var piece_id = $(this).parents('li')[0].id;
-        var server = new Couch.Server('http://finder.ic.ht', 'finder', 'c4a');        
-        var db = new Couch.Database(server, 'public_art');
+        var server = new Couch.Server('http://'+Config.couchhost, Config.couchuser, Config.couchpword);
+        var db = new Couch.Database(server, Config.couchdb);
         
         db.get(piece_id, function(resp) { 
           var cur_user = get_username();
@@ -229,19 +241,57 @@ var ArtFinder = {};
     function handle_username_options() {
       if (get_username() === 'anonymous') {
         $('#set_username_list').show();
+      } else {
+        set_username(get_username());
       }
       $('#set_username_form').unbind('submit').bind('submit', function (e) {
         e.preventDefault();
         var val = $('#id_username').val();
-        window.localStorage['username'] = (val) ? val : 'anonymous';
+        
+        // Check if this username is already in the db. 
+        // If it is, the we see if the uuids match. 
+        // If not, we create the record.
         if (val) {
+          $.getJSON('http://'+app.couch+'/'+app.database+'/_design/pafCouchapp/_list/jsonp/usersbyname?key="'+val+'"&callback=?', function(userData) {
+            //console.log(userData);
+            //console.log(device.uuid);
+            if(userData.length > 0) {
+              userData = userData[0];
+              if(userData._id === device.uuid) {
+                set_username(val);
+              }
+            } else {
+              userData = {
+                _id: device.uuid,
+                doc_type: 'user',
+                username: val
+              };
+              
+              var server = new Couch.Server('http://'+Config.couchhost, Config.couchuser, Config.couchpword);
+              var db = new Couch.Database(server, Config.couchdb);
+              db.post(userData, function(resp) {
+                //console.log(resp);
+                if(resp.ok) {
+                  set_username(val);
+                } else {
+                  // TODO: Something else...
+                }
+              });
+            }
+          });
+          
           $('#set_username_list').hide();
         }
+        
         history.back();
         return false;
       });
     }
 
+    function set_username(uname) {
+      window.localStorage['username'] = uname;
+      $('#set_username_btn .ui-btn-text').text(uname);
+    }
     function get_username() {
       return (window.localStorage['username']) ? window.localStorage['username'] : 'anonymous';
     }

@@ -12,7 +12,6 @@
 }
 #list_view_ul li, #favorites_ul li {
   float: left;
-  width: 320px;
 }
 #list_view div.ui-content, .favorites-page div.ui-content {
   margin: 0;
@@ -25,9 +24,22 @@
 }
 
 .street_address {
-  font-size: 0.6em;
+  font-size: 0.9em;
 }
 
 .img-wrapper img {
   width: 320px;
+}
+.comment {
+  padding-bottom: 0.5em;
+}
+.commenter {
+  font-style: italic;
+  font-size: 0.6em;
+  padding-left: 5px;
+}
+
+.no-comments {
+  font-style: italic;
+  font-size: 0.8em;
 }

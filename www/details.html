@@ -1,8 +1,18 @@
 <!-- Details -->
 <div data-role="page" class="detail-page" data-theme="d">
     <div data-role="header" data-position="inline">
-        <a class="back-btn" href="#list_view" data-rel="back">back</a><h1 class="detail-header"></h1>
+        <a href="#list_view">back</a><h1 class="detail-header"></h1>
     </div>    
 
-    <div data-role="content" class="detail-container"></div>
+    <div data-role="content">
+      <div class="detail-container"></div>
+      <div class="comments-container"></div>
+      <form action="." id="add_comment">
+        <div data-role="fieldcontain">
+          <label for="new_comment">Your comment</label>
+          <textarea cols="40" rows="8" name="new_comment" id="new_comment"></textarea>
+          <input type="submit" value="add comment" />
+        </div>
+      </form>
+    </div>
 </div>
