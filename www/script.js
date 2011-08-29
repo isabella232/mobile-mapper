@@ -75,9 +75,7 @@ var ArtFinder = {};
       
       // Link up the "more info" button to the current piece of art
       $('#list_view_more_link').bind('tap', function(ev) {
-        console.log('more info link was fired');
         ev.preventDefault();
-        //attr('href','details.html?id='+$('.current_work').attr('id'));
         var go_to_id = $('.current_work').attr('id');
         if(go_to_id) {
           $.mobile.changePage('details.html?id='+go_to_id);
