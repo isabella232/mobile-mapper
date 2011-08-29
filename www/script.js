@@ -87,7 +87,7 @@ var ArtFinder = {};
         //event.type
         var $currentWork = $(this).find('.current_work');
         var delta = $currentWork.outerWidth();
-        var cur_pos = parseInt($('#list_view_ul').css('margin-left'));
+        var cur_pos = parseInt($('#list_view_ul').css('margin-left'), 10);
         var possible = (ev.type == 'swipeleft') ? $currentWork.next('li').length : $currentWork.prev('li').length;
         var new_pos = (ev.type == 'swipeleft') ? (cur_pos - delta) : (cur_pos + delta);
 

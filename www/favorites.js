@@ -55,7 +55,7 @@
         // Add swipe handlers
         $(_options.favoritesTarget+' li.piece').live('swipeleft swiperight', function(ev) {
           var delta = $(this).outerWidth();
-          var cur_pos = parseInt($(this).parent().css('margin-left'));
+          var cur_pos = parseInt($(this).parent().css('margin-left'), 10);
           var new_pos = (ev.type === 'swipeleft') ? cur_pos - delta : cur_pos + delta;
           var dir_func = (ev.type === 'swipeleft') ? $(this).next() : $(this).prev();
           
