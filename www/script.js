@@ -75,6 +75,7 @@ var ArtFinder = {};
       
       // Link up the "more info" button to the current piece of art
       $('#list_view_more_link').bind('tap', function(ev) {
+        
         ev.preventDefault();
         var go_to_id = $('.current_work').attr('id');
         if(go_to_id) {
@@ -92,13 +93,12 @@ var ArtFinder = {};
         var new_pos = (ev.type == 'swipeleft') ? (cur_pos - delta) : (cur_pos + delta);
 
         if(possible) {
-          $(this).animate({'margin-left': new_pos +'px'} , 500, function() {            
-            if(ev.type == 'swipeleft') {
-              $currentWork.removeClass('current_work').next('li').addClass('current_work');
-            } else {
-              $currentWork.removeClass('current_work').prev('li').addClass('current_work');
-            }
-          });
+          if(ev.type == 'swipeleft') {
+            $currentWork.removeClass('current_work').next('li').addClass('current_work');
+          } else {
+            $currentWork.removeClass('current_work').prev('li').addClass('current_work');
+          }
+          $(this).animate({'margin-left': new_pos +'px'} , 500, function() {    });
         }
       });
       
