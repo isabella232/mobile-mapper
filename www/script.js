@@ -156,7 +156,9 @@ var ArtFinder = {};
     };
   
     var setupMap = function() {
+      $.mobile.showPageLoadingMsg();
       geo.getPosition().then(function(position) {
+        $.mobile.hidePageLoadingMsg();
         geo.putMap(position.coords);
         current_location = position.coords;
       });

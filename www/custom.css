@@ -39,7 +39,7 @@
   padding-left: 5px;
 }
 
-.no-comments {
+.no-comments, .piece-details dt {
   font-style: italic;
   font-size: 0.8em;
 }

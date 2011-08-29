@@ -8,7 +8,10 @@
     _id;
     
     // Array of fields to ignore when dumping all the data to the screen
-    var ignoreFields = ['title','geometry','id','_id','_rev','_attachments','comments','doc_type','data_source'];
+    var ignoreFields = [
+      'title','artist','description','image_urls','geometry','id','_id','_rev',
+      '_attachments','comments','doc_type','data_source'
+    ];
     
     // Setup DB stuff for writing
     var server = new Couch.Server('http://'+Config.couchhost, Config.couchuser, Config.couchpword);
@@ -42,16 +45,30 @@
                 }
               }
           }
-          detailsHtml += '<ul>';
+          
+          if(artData.artist) {
+            detailsHtml += '<div class="artist-name">A piece by '+artData.artist+'</div>';
+          }
+          
+          if(artData.description) {
+            detailsHtml += '<div class="piece-description">'+artData.description+'</div>';
+          }
+          
+          detailsHtml += '<h3>Details</h3>';
+          detailsHtml += '<dl class="piece-details">';
           // Dump everything else onto the page
           $.each(artData, function(i, n) {
-              // HACK - the following if could be done more gracefully
               if(n != '' && ignoreFields.indexOf(i) == -1) {
-                  detailsHtml += '<li><strong>'+i+'</strong>'+n+'</li>';
+                  detailsHtml += '<dt>'+i.toLowerCase().charAt(0).toUpperCase()+i.slice(1)+'</dt><dd>'+n+'</dd>';
               }
           });
-          detailsHtml += '<ul>';
+          detailsHtml += '<dl>';
           detailsHtml += imageHtml;
+          
+          if(artData.data_source) {
+            detailsHtml += '<div class="piece-data-source">This data was provided by '+artData.data_source+'</div>';
+          }
+          
           detailsHtml = '<div class="details_wrapper">'+detailsHtml+'</div>';
           $detailTarget.html(detailsHtml);
           

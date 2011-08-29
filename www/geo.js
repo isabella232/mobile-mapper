@@ -5,7 +5,7 @@ var geo = function() {
   var current_location_marker = null;
   var record_markers = {};
 
-  function getPosition(callback) {
+  function getPosition() {
     var dfd = $.Deferred();
     navigator.geolocation.getCurrentPosition(
       function(coords) { dfd.resolve(coords); } ,
