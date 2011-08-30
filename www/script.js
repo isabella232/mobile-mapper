@@ -173,7 +173,9 @@ var ArtFinder = {};
           if(el.properties._attachments) {
             imgs = getKeys(el.properties._attachments);
             image_path = 'http://'+couch+'/'+database+'/'+el.properties._id+'/'+imgs[0];
-          } else {
+          } else if(el.properties.image_urls) {
+            image_path = el.properties.image_urls[0];
+          }else {
             image_path = 'images/noimage.png';
           }
           retHtml += '<li class="piece" id="'+el.properties._id+'" style="width:'+$(window).width()+'px;">' +
