@@ -11,7 +11,7 @@ var geo = function() {
     navigator.geolocation.getCurrentPosition(
       function(coords) { dfd.resolve(coords); } ,
       function(error) { console.log(error); dfd.resolve({coords: {latitude: 37.7749295, longitude: -122.4194155}}) },
-      { maximumAge:600000, timeout: 10000}
+      { maximumAge:600000, timeout: 7000}
     )
     //dfd.resolve({coords: {latitude: 37.7749295, longitude: -122.4194155}});
     return dfd.promise();
