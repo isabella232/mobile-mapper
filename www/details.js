@@ -59,7 +59,7 @@
           // Dump everything else onto the page
           $.each(artData, function(i, n) {
               if(n != '' && ignoreFields.indexOf(i) == -1) {
-                  detailsHtml += '<dt>'+i.toLowerCase().charAt(0).toUpperCase()+i.slice(1)+'</dt><dd>'+n+'</dd>';
+                  detailsHtml += '<dt>'+Utils.titleCase(i.replace('_',' '))+'</dt><dd>'+n+'</dd>';
               }
           });
           detailsHtml += '<dl>';
