@@ -28,7 +28,8 @@
           var imagePath = '',
               imageHtml = '',
               detailsHtml = '',
-              commentsHtml = '';
+              commentsHtml = '',
+              imgIdx = 0;
           
           $.mobile.hidePageLoadingMsg();
 
@@ -44,6 +45,12 @@
                   detailsHtml += '<div class="img-wrapper"><img src="'+imagePath+'" /></div>';
                 }
               }
+          }
+                    
+          if(artData.image_urls && artData.image_urls.length) {
+            for(; imgIdx < artData.image_urls.length; imgIdx += 1) {
+              detailsHtml += '<div class="img-wrapper"><img src="'+artData.image_urls[imgIdx]+'" /></div>';
+            }
           }
           
           if(artData.artist) {
