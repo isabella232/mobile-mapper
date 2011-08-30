@@ -43,7 +43,10 @@ var geo = function() {
       zoom: 13,
       mapTypeId: google.maps.MapTypeId.ROADMAP,
       center: current_map_location,
-      mapTypeControl: false
+      mapTypeControl: false,
+      zoomControlOptions: {
+        position: google.maps.ControlPosition.LEFT_TOP
+      }
     };
     
     // Create the map
