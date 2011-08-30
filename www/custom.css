@@ -43,3 +43,7 @@
   font-style: italic;
   font-size: 0.8em;
 }
+
+.detail-container .img-wrapper {
+  margin-left: -15px;
+}
