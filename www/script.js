@@ -30,6 +30,12 @@ var ArtFinder = {};
     
     // Var to keep track of our navigator.geolocation watch when adding a record
     var add_record_watch;
+    
+    // Lets cache some stuff
+    var the_cache = {};
+    
+    // boolean to keep track of whether or not we need to update the map
+    var update_map = true;
   
     // Wrap up all our initial bindings
     var bind = function() {
@@ -148,17 +154,39 @@ var ArtFinder = {};
         // execute on ready
       });
       
+      $('#location_search_form').unbind('submit').bind('submit', function(ev) {
+        var search_text = $('#search_text').val();
+        $('#search_text').val('');
+        ev.preventDefault();
+        ev.stopPropagation()
+
+        var geocoder = new google.maps.Geocoder();
+        geocoder.geocode({ address: search_text }, function(results, status) {
+          if(status === google.maps.GeocoderStatus.OK) {
+            $('.ui-dialog').dialog('close');
+            geo.panTo({ latitude: results[0].geometry.location.lat(), longitude: results[0].geometry.location.lng()});
+          } else {
+            console.error(status);
+          }
+        });
+        
+      });
       // First check that the user has agreed to the terms & conditions
       present_agreement();
     };
   
     var setupMap = function() {
-      $.mobile.showPageLoadingMsg();
-      geo.getPosition().then(function(position) {
-        $.mobile.hidePageLoadingMsg();
-        geo.putMap(position.coords);
-        current_location = position.coords;  
-      });
+      if(update_map) {
+        update_map = false;
+        $.mobile.showPageLoadingMsg();
+        geo.getPosition().then(function(position) {
+          $.mobile.hidePageLoadingMsg();
+          geo.putMap(position.coords);
+          current_location = position.coords;  
+        });
+      } else {
+        geo.refreshMap();
+      }
     };
   
   

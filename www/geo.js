@@ -10,7 +10,7 @@ var geo = function() {
     var dfd = $.Deferred();
     navigator.geolocation.getCurrentPosition(
       function(coords) { dfd.resolve(coords); } ,
-      function(error) { console.log(error); dfd.resolve({coords: {latitude: 37.7749295, longitude: -122.4194155}}) },
+      function(error) { console.error(error); dfd.resolve({coords: {latitude: 37.7749295, longitude: -122.4194155}}) },
       { maximumAge:600000, timeout: 7000}
     )
     //dfd.resolve({coords: {latitude: 37.7749295, longitude: -122.4194155}});
@@ -63,7 +63,7 @@ var geo = function() {
 
     // Refresh the map pins after the map is dragged
     google.maps.event.addListener(map, 'dragend', function () {
-      //console.log('dragend is kicking off');
+      console.log('dragend is kicking off');
       putPins(map, record_markers);
       user_moved_map = true;
     });
@@ -107,7 +107,7 @@ var geo = function() {
     });
   }
   
-  function makePin(map, p) {
+  function makePin(p) {
     var id = p.properties._id;
     
     var content = '<div class="ibc"><a href="details.html?id='+id+'" title="' + p.properties.title + '">' + p.properties.title + '</div>';
@@ -136,7 +136,7 @@ var geo = function() {
     getData(function(locationData) {
       $.each(locationData, function (i, p) {
         if (!markers[p.properties._id]) {
-          markers[p.properties._id] = makePin(map, p);
+          markers[p.properties._id] = makePin(p);
         }
       });
     })
@@ -201,6 +201,14 @@ var geo = function() {
                       Math.cos(lon2-lon1)) * R;
     return d;
   };
+  
+  // This function is just a wrapper to kick off the dragend event
+  // TODO: this function should probably have all the logic and dragend should use it
+  var refreshMap = function() {
+    if(map) { 
+      google.maps.event.trigger(map,'dragend');
+    }
+  }
 
   return {
     getPosition: getPosition,
@@ -211,7 +219,8 @@ var geo = function() {
     onMapMove: onMapMove,
     getData: getData,
     quickDist: quickDist,
-    getWatch: getWatch
+    getWatch: getWatch,
+    refreshMap: refreshMap
   };
   
 }();
