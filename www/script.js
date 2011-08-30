@@ -165,6 +165,8 @@ var ArtFinder = {};
     function buildListView(pins) {
       var retHtml = '';
       var imgs, image_path;
+      
+      var old_current_id = $('.current_work').attr('id') || false;
 
       if(pins.length > 0) {
         $.each(pins, function (idx, el) {
@@ -193,8 +195,9 @@ var ArtFinder = {};
       // Make the list refresh (so jQuery UI runs on it) and make the first item the current item
       $('#list_view_ul li').page();
       
-      if($('.current_work').length == 0) {
-        console.log('HHHEEEELLLLLLLLOOOOO');
+      if(old_current_id) {
+        $('#'+old_current_id).addClass('current_work');
+      } else {
         $('#list_view_ul li').first().addClass('current_work');
       }
             
