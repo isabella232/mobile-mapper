@@ -179,7 +179,7 @@ var ArtFinder = {};
           retHtml += '<li class="piece" id="'+el.properties._id+'" style="width:'+$(window).width()+'px;">' +
                       '<div class="list-view-header">' +
                       '<h3>'+el.properties.title+'</h3>' +
-                      '<span class="street_address">'+el.properties.address+'</span>'+
+                      '<span class="street_address">'+el.properties.location_description+'</span>'+
                       '</div>'+
                       '<div class="img-wrapper"><img src="'+image_path+'" /></div>'+
                       '<div data-role="controlgroup" data-type="horizontal">'+
@@ -195,7 +195,7 @@ var ArtFinder = {};
       // Make the list refresh (so jQuery UI runs on it) and make the first item the current item
       $('#list_view_ul li').page();
       
-      if(old_current_id) {
+      if(old_current_id && $('#'+old_current_id).length > 0) {
         $('#'+old_current_id).addClass('current_work');
       } else {
         $('#list_view_ul li').first().addClass('current_work');
