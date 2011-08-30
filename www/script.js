@@ -66,7 +66,7 @@ var ArtFinder = {};
           });  
           
           // Build the list view
-          console.log('calling buildListView');
+          //console.log('calling buildListView');
           buildListView(mapPins.slice(0,10));
         });
       });
