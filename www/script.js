@@ -13,9 +13,7 @@ var ArtFinder = {};
 
 (function(m) {
   m.App = function() {
-    // Array of artwork objects
-    var mapPins = [];
-
+    
     var database = Config.couchdb;
     var couch = Config.couchhost;
 
@@ -52,8 +50,7 @@ var ArtFinder = {};
       });
     
       $("#list_view").bind("pagebeforeshow", function() {
-        //mapPins = [];
-        
+        var mapPins = [];
         geo.getData(function(resp) {
           $.each(resp, function (i, p) {
             // Do a quick as-the-crow-flies distance calculation
@@ -70,7 +67,7 @@ var ArtFinder = {};
           
           // Build the list view
           console.log('calling buildListView');
-          buildListView();
+          buildListView(mapPins.slice(0,10));
         });
       });
       
@@ -160,15 +157,14 @@ var ArtFinder = {};
       geo.getPosition().then(function(position) {
         $.mobile.hidePageLoadingMsg();
         geo.putMap(position.coords);
-        current_location = position.coords;
+        current_location = position.coords;  
       });
     };
   
   
-    function buildListView() {
+    function buildListView(pins) {
       var retHtml = '';
       var imgs, image_path;
-      var pins = mapPins.slice(0,10);
 
       if(pins.length > 0) {
         $.each(pins, function (idx, el) {
@@ -500,7 +496,6 @@ var ArtFinder = {};
     }
   
     return {
-      mapPins: mapPins,
       database: database,
       couch: couch,
       bind: bind,
