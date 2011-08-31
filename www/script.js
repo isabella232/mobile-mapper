@@ -164,7 +164,9 @@ var ArtFinder = {};
         geocoder.geocode({ address: search_text }, function(results, status) {
           if(status === google.maps.GeocoderStatus.OK) {
             $('.ui-dialog').dialog('close');
+            console.log(results);
             geo.panTo({ latitude: results[0].geometry.location.lat(), longitude: results[0].geometry.location.lng()});
+            //geo.panToBounds(results[0].geometry.viewport);
           } else {
             console.error(status);
           }

@@ -28,6 +28,10 @@ var geo = function() {
       });
     }
   }
+  // Wrapper for gmaps panToBounds
+  function panToBounds(bounds) {
+      map.panToBounds(bounds);
+  }
   
   function putMap(coords) {
     setTimeout(function() { geo.locked = false; }, 1000);
@@ -217,6 +221,7 @@ var geo = function() {
   return {
     getPosition: getPosition,
     panTo: panTo,
+    panToBounds: panToBounds,
     putMap: putMap,
     putPins: putPins,
     deleteMap: deleteMap,
@@ -224,7 +229,8 @@ var geo = function() {
     getData: getData,
     quickDist: quickDist,
     getWatch: getWatch,
-    refreshMap: refreshMap
+    refreshMap: refreshMap,
+    map: map
   };
   
 }();
