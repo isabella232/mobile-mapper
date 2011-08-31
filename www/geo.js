@@ -21,7 +21,11 @@ var geo = function() {
   // Wrapper for gmaps panTo (if no coords are passed, we go to the user's position).
   function panTo(coords) {
     if(coords) {
+//        map.setCenter(new google.maps.LatLng(coords.latitude, coords.longitude));
       map.panTo(new google.maps.LatLng(coords.latitude, coords.longitude));
+//        setTimeout(function() { map.panTo(new google.maps.LatLng(coords.latitude, coords.longitude));}, 1500);
+//        google.maps.event.trigger(map, 'resize');
+//      
     } else {
       getPosition().then(function(pos) {
         coords = pos.coords;
@@ -31,7 +35,7 @@ var geo = function() {
   }
   // Wrapper for gmaps panToBounds
   function panToBounds(bounds) {
-      map.panToBounds(bounds);
+    map.panToBounds(bounds);
   }
   
   function putMap(coords) {
