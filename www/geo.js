@@ -110,7 +110,9 @@ var geo = function() {
   function makePin(p) {
     var id = p.properties._id;
     
-    var content = '<div class="ibc"><a href="details.html?id='+id+'" title="' + p.properties.title + '">' + p.properties.title + '</div>';
+    var imgPath = Utils.getImage(p.properties);
+    
+    var content = '<div class="ibc"><a href="details.html?id='+id+'" title="' + p.properties.title + '">' + p.properties.title + '</a><img class="thumbnail" src="'+imgPath+'" /></div>';
     var info_window = new google.maps.InfoWindow({
       content: content,
       maxWidth: 400
