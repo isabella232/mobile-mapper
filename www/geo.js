@@ -62,11 +62,7 @@ var geo = function() {
     });
 
     // Refresh the map pins after the map is dragged
-    google.maps.event.addListener(map, 'dragend', function () {
-      console.log('dragend is kicking off');
-      putPins(record_markers);
-      user_moved_map = true;
-    });
+    google.maps.event.addListener(map, 'dragend', refreshMap);
 
     // Setup the info window for the user's position
     var info_window = new google.maps.InfoWindow({
@@ -132,13 +128,15 @@ var geo = function() {
     
   }
 
-  function putPins(markers) {
+  function putPins(markers, callback) {
     getData(function(locationData) {
       $.each(locationData, function (i, p) {
         if (!markers[p.properties._id]) {
           markers[p.properties._id] = makePin(p);
         }
       });
+      
+      if(callback) callback();
     })
   }
   
@@ -205,9 +203,14 @@ var geo = function() {
   // This function is just a wrapper to kick off the dragend event
   // TODO: this function should probably have all the logic and dragend should use it
   var refreshMap = function() {
+    //console.log('dragend is kicking off');
     if(map) { 
-      //console.log(map);
-      google.maps.event.trigger(map,'dragend');
+      putPins(record_markers, function() {
+        //google.maps.event.trigger(map, 'bounds_changed');
+
+      });
+      user_moved_map = true;
+
     }
   }
 
