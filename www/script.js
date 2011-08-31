@@ -231,6 +231,7 @@ var ArtFinder = {};
         $('#'+old_current_id).addClass('current_work');
       } else {
         $('#list_view_ul li').first().addClass('current_work');
+        $('#list_view_ul').css('margin-left','0');
       }
             
       // Like button functionality
