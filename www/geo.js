@@ -5,6 +5,7 @@ var geo = function() {
   var current_location_marker = null;
   var record_markers = {};
   var data_cache = { bbox: '', features: {} };
+  var all_info_windows = [];
   
   function getPosition() {
     var dfd = $.Deferred();
@@ -107,7 +108,7 @@ var geo = function() {
     });
   }
   
-  function makePin(p) {
+  var _makePin = function(p) {
     var id = p.properties._id;
     
     var imgPath = Utils.getImage(p.properties);
@@ -120,12 +121,6 @@ var geo = function() {
                       '</a>'+
                     '</div>'+
                   '</div>';
-    /*
-    var info_window = new google.maps.InfoWindow({
-      content: content,
-      maxWidth: 400
-    });
-    */
     
     var newOffset = new google.maps.Size(-62,3,'px','px');
     var winOptions = {
@@ -139,6 +134,8 @@ var geo = function() {
     var info_window = new InfoBox();
     info_window.setOptions(winOptions);
 
+    all_info_windows.push(info_window);
+    
     var pin_icon = new google.maps.MarkerImage('images/green_pin.png', null, null, null, new google.maps.Size(12, 28));
 
     var marker = new google.maps.Marker({
@@ -148,18 +145,28 @@ var geo = function() {
       position: new google.maps.LatLng(p.geometry.coordinates[1], p.geometry.coordinates[0])
     });
     google.maps.event.addListener(marker, 'click', function (location) {
+      _clearInfoWindows();
       info_window.open(map, marker);
     });
     
     return marker;
     
-  }
+  };
+  
+  var _clearInfoWindows = function() {
+    var i = 0;
+    var max = all_info_windows.length;
+        
+    for(; i < max; i+=1) {
+      all_info_windows[i].close();
+    }
+  };
 
   function putPins(markers, callback) {
     getData(function(locationData) {
       $.each(locationData, function (i, p) {
         if (!markers[p.properties._id]) {
-          markers[p.properties._id] = makePin(p);
+          markers[p.properties._id] = _makePin(p);
         }
       });
       
