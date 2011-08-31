@@ -5,7 +5,7 @@ var geo = function() {
   var current_location_marker = null;
   var record_markers = {};
   var data_cache = { bbox: '', features: {} };
-
+  
   function getPosition() {
     var dfd = $.Deferred();
     navigator.geolocation.getCurrentPosition(
@@ -112,11 +112,32 @@ var geo = function() {
     
     var imgPath = Utils.getImage(p.properties);
     
-    var content = '<div class="ibc"><a href="details.html?id='+id+'" title="' + p.properties.title + '">' + p.properties.title + '</a><img class="thumbnail" src="'+imgPath+'" /></div>';
+    var content = '<div class="bubble-wrap">'+
+                    '<div class="infoBubbs">' +
+                      '<strong>'+ p.properties.title + '</strong>'+
+                      '<a href="details.html?id='+id+'" title="' + p.properties.title + '">'+
+                        '<img class="thumbnail" src="'+imgPath+'" />'+
+                      '</a>'+
+                    '</div>'+
+                  '</div>';
+    /*
     var info_window = new google.maps.InfoWindow({
       content: content,
       maxWidth: 400
     });
+    */
+    
+    var newOffset = new google.maps.Size(-62,3,'px','px');
+    var winOptions = {
+        content: content,
+        enableEventPropagation: true,
+        position: new google.maps.LatLng(p.geometry.coordinates[1], p.geometry.coordinates[0]),
+        pixelOffset: newOffset,
+        closeBoxMargin: '2px 2px 2px 2px'
+    };
+    
+    var info_window = new InfoBox();
+    info_window.setOptions(winOptions);
 
     var pin_icon = new google.maps.MarkerImage('images/green_pin.png', null, null, null, new google.maps.Size(12, 28));
 
