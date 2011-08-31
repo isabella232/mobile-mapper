@@ -201,7 +201,7 @@ var ArtFinder = {};
       if(pins.length > 0) {
         $.each(pins, function (idx, el) {
           if(el.properties._attachments) {
-            imgs = getKeys(el.properties._attachments);
+            imgs = Utils.getKeys(el.properties._attachments);
             image_path = 'http://'+couch+'/'+database+'/'+el.properties._id+'/'+imgs[0];
           } else if(el.properties.image_urls) {
             image_path = el.properties.image_urls[0];
@@ -263,17 +263,6 @@ var ArtFinder = {};
         });
 
       });
-    }
-  
-    // Helper function that returns all the keys for a given object
-    var getKeys = function(obj){
-       var keys = [];
-       for(var key in obj){
-         if (obj.hasOwnProperty(key)) {
-           keys.push(key);
-         }
-       }
-       return keys;
     }
 
     function handle_username_options() {
@@ -535,8 +524,7 @@ var ArtFinder = {};
       couch: couch,
       bind: bind,
       setupMap: setupMap,
-      getUsername: get_username,
-      getKeys: getKeys
+      getUsername: get_username
     };
   };
 })(ArtFinder);

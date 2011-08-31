@@ -27,7 +27,7 @@
           // Loop through the favorites array, creating panels for the list view
           $.each(theFavorites, function (idx, el) {
             if(el._attachments) {
-              imgs = m.App().getKeys(el._attachments);
+              imgs = Utils.getKeys(el._attachments);
               image_path = 'http://'+app.couch+'/'+app.database+'/'+el._id+'/'+imgs[0];
             } else {
               image_path = 'images/noimage.png';

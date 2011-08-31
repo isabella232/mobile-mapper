@@ -30,7 +30,8 @@ var Utils = function() {
   
   return {
     titleCase : titleCase,
-    getImage  : getImage
+    getImage  : getImage,
+    getKeys   : getKeys
   };
   
 }();
