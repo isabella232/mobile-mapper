@@ -122,12 +122,11 @@ var geo = function() {
                     '</div>'+
                   '</div>';
     
-    var newOffset = new google.maps.Size(-62,3,'px','px');
     var winOptions = {
         content: content,
         enableEventPropagation: true,
         position: new google.maps.LatLng(p.geometry.coordinates[1], p.geometry.coordinates[0]),
-        pixelOffset: newOffset,
+        pixelOffset: new google.maps.Size(-62,3,'px','px'),
         closeBoxMargin: '2px 2px 2px 2px'
     };
     
