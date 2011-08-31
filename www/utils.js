@@ -9,7 +9,7 @@ var Utils = function() {
     
     if(piece._attachments) {
       imgs = getKeys(piece._attachments);
-      image_path = 'http://'+ArtFinder.App().couch+'/'+ArtFinder.App().database+'/'+piece._id+'/'+imgs[0];
+      image_path = 'http://'+Config.couchhost+'/'+Config.couchdb+'/'+piece._id+'/'+imgs[0];
     } else if(piece.image_urls) {
       image_path = piece.image_urls[0];
     }
