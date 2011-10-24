@@ -13,35 +13,35 @@ var ArtFinder = {};
 
 (function(m) {
   m.App = function() {
-    
+
     var database = Config.couchdb;
     var couch = Config.couchhost;
 
     var default_location = {latitude: 37.78415, longitude: -122.43113};
-    
+
     // Holds the users current location data
     var current_location = default_location;
-    
+
     // Boolean to prohibit a record from being saved twice
     var is_saving = false;
-    
+
     // Var to keep track of our nearby navigator.geolocation watch
     var nearby_watch;
-    
+
     // Var to keep track of our navigator.geolocation watch when adding a record
     var add_record_watch;
-    
+
     // Lets cache some stuff
     var the_cache = {};
-    
+
     // boolean to keep track of whether or not we need to update the map
     var update_map = true;
-  
+
     // Wrap up all our initial bindings
     var bind = function() {
-      
+
       handle_username_options();
-      
+
       $("#add_record").bind("pagebeforeshow", configure_add_form);
       $("#nearby_map").bind("pagebeforeshow", setupMap);
       $("#nearby_map").bind("pagehide", function() {
@@ -50,56 +50,59 @@ var ArtFinder = {};
       $("#add_record").bind("pagehide", function() {
         navigator.geolocation.clearWatch(add_record_watch);
       });
-    
+
       $("#find_me").bind('tap', function(ev) {
         geo.panTo();
       });
-    
+
       $("#list_view").bind("pagebeforeshow", function() {
         var mapPins = [];
-        geo.getData(function(resp) {
-          $.each(resp, function (i, p) {
-            // Do a quick as-the-crow-flies distance calculation
-            p.properties.distance = geo.quickDist(current_location.latitude, current_location.longitude,p.geometry.coordinates[1], p.geometry.coordinates[0]);
+    
+          geo.getData(function(resp) {
+            $.each(resp, function (i, p) {
+              // Do a quick as-the-crow-flies distance calculation
+              p.properties.distance = geo.quickDist(current_location.latitude, current_location.longitude,p.geometry.coordinates[1], p.geometry.coordinates[0]);
 
-            // Add each point to the global list of pins
-            mapPins.push(p);
+              // Add each point to the global list of pins
+              mapPins.push(p);
+            });
+
+            // Sort the mapPins from closest to longest
+            mapPins.sort(function(a, b){
+             return a.properties.distance - b.properties.distance;
+            });
+
+            // Build the list view
+            console.log('calling buildListView');
+            console.log(mapPins);
+            buildListView(mapPins.slice(0,10));
           });
-          
-          // Sort the mapPins from closest to longest
-          mapPins.sort(function(a, b){
-           return a.properties.distance - b.properties.distance;
-          });  
-          
-          // Build the list view
-          //console.log('calling buildListView');
-          buildListView(mapPins.slice(0,10));
-        });
+        
       });
-      
+
       $('#list_view').bind('pagehide', function() {
         //$('#list_view_ul').empty();
         //$('#list_view_ul').css('margin-left','0');
       });
-    
+
       $('.detail-page').live('pagebeforeshow',function(event){
         ArtFinder.Details();
       });
-      
-      $('.favorites-page').live('pagebeforeshow',function(event){        
+
+      $('.favorites-page').live('pagebeforeshow',function(event){
         ArtFinder.Favorites();
       });
-      
+
       // Link up the "more info" button to the current piece of art
       $('#list_view_more_link').bind('tap', function(ev) {
-        
+
         ev.preventDefault();
         var go_to_id = $('.current_work').attr('id');
         if(go_to_id) {
           $.mobile.changePage('details.html?id='+go_to_id);
-        } 
+        }
       });
-      
+
       // Setup the swipe browsing events
       $('#list_view_ul').live('swipeleft swiperight', function(ev) {
         //event.type
@@ -118,47 +121,42 @@ var ArtFinder = {};
           $(this).animate({'margin-left': new_pos +'px'} , 500, function() {    });
         }
       });
-      
-      
+
+
       $('#login_button').bind('click', function(evt) {
         evt.preventDefault();
         var userData = {
           password_sha: hex_sha1($('#password_field').val())
         };
-        $.couch.db('paf_users','http://finder.ic.ht').put($('#username_field').val(), userData);
-        
-        /*
-        $.ajax('http://finder.ic.ht/_session', {
-          type: 'POST',
-          crossDomain: true,
-          data: {
-            name: $('#username_field').val(),
-            password: hex_sha1($('#password_field').val())
-          },
-          beforeSend: function( xhr ) {
-            xhr.overrideMimeType( 'application/x-www-form-urlencoded' );
-          },
-          success: function (data) {
-            console.log(data);
-          },
-          error: function (jqXHR, textStatus, errorThrown) {
-            console.log(textStatus);
-            console.log(errorThrown);
-          }
-        });
-        */
-        
+        //$.couch.db('paf_users','http://localhost:5984').put($('#username_field').val(), userData);
+        //debug.log(userData);
+
+        // $.ajax('http://finder.ic.ht/_session', {
+        //           type: 'POST',
+        //           data: {
+        //             name: $('#username_field').val(),
+        //             password: hex_sha1($('#password_field').val())
+        //           },
+        //           success: function (data) {
+        //             alert('success');
+        //             debug.log(data);
+        //           },
+        //           error: function (jqXHR, textStatus, errorThrown) {
+        //             alert('error');
+        //             debug.log(textStatus);
+        //             debug.log(errorThrown);
+        //           }
+        //         }, json);
+
       });
-      
-      Couch.init(function() {
-        // execute on ready
-      });
-      
+
+      //Couch.init(function() {});
+
       $('#location_search_form').unbind('submit').bind('submit', function(ev) {
         var search_text = $('#search_text').val();
         $('#search_text').val('');
         ev.preventDefault();
-        ev.stopPropagation()
+        ev.stopPropagation();
 
         var geocoder = new google.maps.Geocoder();
         geocoder.geocode({ address: search_text }, function(results, status) {
@@ -171,12 +169,12 @@ var ArtFinder = {};
             console.error(status);
           }
         });
-        
+
       });
       // First check that the user has agreed to the terms & conditions
       present_agreement();
     };
-  
+
     var setupMap = function() {
       if(update_map) {
         update_map = false;
@@ -184,22 +182,23 @@ var ArtFinder = {};
         geo.getPosition().then(function(position) {
           $.mobile.hidePageLoadingMsg();
           geo.putMap(position.coords);
-          current_location = position.coords;  
+          current_location = position.coords;
         });
       } else {
         geo.refreshMap();
       }
     };
-  
-  
+
+
     function buildListView(pins) {
       var retHtml = '';
       var imgs, image_path;
-      
+
       var old_current_id = $('.current_work').attr('id') || false;
 
       if(pins.length > 0) {
         $.each(pins, function (idx, el) {
+          console.log(el);
           if(el.properties._attachments) {
             imgs = Utils.getKeys(el.properties._attachments);
             image_path = 'http://'+couch+'/'+database+'/'+el.properties._id+'/'+imgs[0];
@@ -223,30 +222,30 @@ var ArtFinder = {};
         });
       }
       $('#list_view_ul').html(retHtml);
-      
+
       // Make the list refresh (so jQuery UI runs on it) and make the first item the current item
       $('#list_view_ul li').page();
-      
+
       if(old_current_id && $('#'+old_current_id).length > 0) {
         $('#'+old_current_id).addClass('current_work');
       } else {
         $('#list_view_ul li').first().addClass('current_work');
         $('#list_view_ul').css('margin-left','0');
       }
-            
+
       // Like button functionality
       // TODO: refactor the sh!t out of this.
       $('#list_view_ul .like-btn').unbind('click').bind('click', function(ev) {
         ev.preventDefault();
-        
+
         // Get the current record
         var piece_id = $(this).parents('li')[0].id;
         var server = new Couch.Server('http://'+Config.couchhost, Config.couchuser, Config.couchpword);
         var db = new Couch.Database(server, Config.couchdb);
-        
-        db.get(piece_id, function(resp) { 
+
+        db.get(piece_id, function(resp) {
           var cur_user = get_username();
-          
+
           // Modify it
           var cur_rec = resp;
           var the_favorites = cur_rec.favorites || [];
@@ -254,12 +253,12 @@ var ArtFinder = {};
             the_favorites.push(get_username());
           }
           cur_rec.favorites = the_favorites;
-          
+
           // Update it
-          db.put(piece_id, cur_rec, function(saveResp) { 
+          db.put(piece_id, cur_rec, function(saveResp) {
             if(saveResp.ok === true) {
               $.mobile.changePage($('#thank_you'));
-            } 
+            }
           });
         });
 
@@ -275,26 +274,26 @@ var ArtFinder = {};
       $('#set_username_form').unbind('submit').bind('submit', function (e) {
         e.preventDefault();
         var val = $('#id_username').val();
-        
-        // Check if this username is already in the db. 
-        // If it is, the we see if the uuids match. 
+
+        // Check if this username is already in the db.
+        // If it is, the we see if the uuids match.
         // If not, we create the record.
         if (val) {
           $.getJSON('http://'+app.couch+'/'+app.database+'/_design/pafCouchapp/_list/jsonp/usersbyname?key="'+val+'"&callback=?', function(userData) {
-            //console.log(userData);
-            //console.log(device.uuid);
+            console.log(userData);
+            console.log(device.uuid);
             if(userData.length > 0) {
               userData = userData[0];
-              if(userData._id === device.uuid) {
+              //if(userData._id === device.uuid) {
                 set_username(val);
-              }
+              //}
             } else {
               userData = {
                 _id: device.uuid,
                 doc_type: 'user',
                 username: val
               };
-              
+
               var server = new Couch.Server('http://'+Config.couchhost, Config.couchuser, Config.couchpword);
               var db = new Couch.Database(server, Config.couchdb);
               db.post(userData, function(resp) {
@@ -307,10 +306,10 @@ var ArtFinder = {};
               });
             }
           });
-          
+
           $('#set_username_list').hide();
         }
-        
+
         history.back();
         return false;
       });
@@ -330,7 +329,7 @@ var ArtFinder = {};
         $('#id_agreement_checkbox').bind('change', function () {
           window.localStorage['terms_agreed'] = true;
           $.mobile.changePage($('#nearby_map'), 'pop', true, false);
-        })
+        });
       }
     }
 
@@ -381,7 +380,7 @@ var ArtFinder = {};
                 map.setZoom(18);
                 marker.setPosition(location);
               }
-              geocoded_address = results
+              geocoded_address = results;
               info_window.setContent(geocoded_address[0].formatted_address);
               google.maps.event.addListener(marker, 'click', function (location) {
                 info_window.open(map, marker);
@@ -393,7 +392,7 @@ var ArtFinder = {};
       }
 
       add_record_watch = navigator.geolocation.watchPosition(function (pos) {
-        current_location = pos.coords
+        current_location = pos.coords;
         reverse_geocode_location(new google.maps.LatLng(current_location.latitude, current_location.longitude));
       }, function () {
         if(navigator.notification.alert) {
@@ -519,7 +518,7 @@ var ArtFinder = {};
         return false;
       });
     }
-  
+
     return {
       database: database,
       couch: couch,
@@ -532,8 +531,10 @@ var ArtFinder = {};
 
 // Kick this show off
 var app;
-$('#nearby_map').live('pagecreate',function(event){
-    app = app || ArtFinder.App();
-    app.bind();
-    app.setupMap();
-});
+
+document.addEventListener("deviceready", function() {
+  console.log('kicking off');
+  app = app || ArtFinder.App();
+  app.bind();
+  app.setupMap();
+}, false);

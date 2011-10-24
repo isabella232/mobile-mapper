@@ -71,7 +71,6 @@
     (function init() {
        //Get the username of the current user
        _id = m.App().getUsername();
-       
        // Kick off the rest of the function
        _refreshFavorites(_id);
     })();

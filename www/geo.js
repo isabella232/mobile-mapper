@@ -11,9 +11,12 @@ var geo = function() {
     var dfd = $.Deferred();
     navigator.geolocation.getCurrentPosition(
       function(coords) { dfd.resolve(coords); } ,
-      function(error) { console.error(error); dfd.resolve({coords: {latitude: 37.7749295, longitude: -122.4194155}}) },
+      function(error) { 
+        console.log(error); 
+        dfd.resolve({coords: {latitude: 37.7749295, longitude: -122.4194155}}); 
+      },
       { maximumAge:600000, timeout: 7000}
-    )
+    );
     //dfd.resolve({coords: {latitude: 37.7749295, longitude: -122.4194155}});
     return dfd.promise();
   }
@@ -46,7 +49,7 @@ var geo = function() {
     // Set the map options
     var map_options = {
       zoom: 13,
-      mapTypeId: google.maps.MapTypeId.ROADMAP,
+      mapTypeId: google.maps.MapTypeId.TERRAIN,
       center: current_map_location,
       mapTypeControl: false,
       zoomControlOptions: {
@@ -88,7 +91,7 @@ var geo = function() {
   // Setup the watch method to follow the user if they are moving
   function getWatch() {
     return navigator.geolocation.watchPosition(function (pos) {
-      current_location = pos.coords
+      current_location = pos.coords;
       current_map_location = new google.maps.LatLng(current_location.latitude, current_location.longitude);
       if (!user_moved_map) {
         map.setCenter(current_map_location);
@@ -170,16 +173,16 @@ var geo = function() {
       });
       
       if(callback) callback();
-    })
+    });
   }
   
   function getData(callback) {
     var bounds = map.getBounds();
+
     if(bounds) {
       var ne = bounds.getNorthEast();
       var sw = bounds.getSouthWest();
       var bbox = [sw.lng(),sw.lat(),ne.lng(),ne.lat()].join(",");
-      
       // See if we already have the features for the given bbox
       if(bbox != data_cache.bbox) {
         data_cache.bbox = bbox;        
@@ -187,6 +190,7 @@ var geo = function() {
         $.getJSON('http://'+ app.couch + "/" + app.database + '/_design/geo/_spatiallist/geojson/full?bbox=' + bbox + '&callback=?', {}, function (resp) {
           $.mobile.hidePageLoadingMsg();      
           data_cache.features = resp.features;
+          
           callback(resp.features);
         });
       } else {
@@ -214,14 +218,14 @@ var geo = function() {
       lon: parseFloat(lon),
       deltaY: parseFloat(deltaY),
       deltaX: parseFloat(deltaX)
-    }
+    };
 
     app.lastLocation.bbox = getBBOX(app.lastLocation);
     couch.get('http://'+ app.couch + '/' + app.database + '/geo?bbox=' + app.lastLocation.bbox).then(function(results) {
       putPins(results.rows.map(function(row) {
         return row.value;
       }));
-    })
+    });
   }
   
   // http://www.movable-type.co.uk/scripts/latlong.html
@@ -243,9 +247,8 @@ var geo = function() {
 
       });
       user_moved_map = true;
-
     }
-  }
+  };
 
   return {
     getPosition: getPosition,
@@ -259,6 +262,7 @@ var geo = function() {
     quickDist: quickDist,
     getWatch: getWatch,
     refreshMap: refreshMap,
+    data_cache: data_cache,
     map: map
   };
   
