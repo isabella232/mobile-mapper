@@ -127,7 +127,7 @@ var geo = function() {
     
     var winOptions = {
         content: content,
-        enableEventPropagation: true,
+        enableEventPropagation: false,
         position: new google.maps.LatLng(p.geometry.coordinates[1], p.geometry.coordinates[0]),
         pixelOffset: new google.maps.Size(-62,3,'px','px'),
         closeBoxMargin: '2px 2px 2px 2px'
@@ -185,6 +185,7 @@ var geo = function() {
       var bbox = [sw.lng(),sw.lat(),ne.lng(),ne.lat()].join(",");
       // See if we already have the features for the given bbox
       if(bbox != data_cache.bbox) {
+        console.log('Not using cache.');
         data_cache.bbox = bbox;        
         $.mobile.showPageLoadingMsg();
         $.getJSON('http://'+ app.couch + "/" + app.database + '/_design/geo/_spatiallist/geojson/full?bbox=' + bbox + '&callback=?', {}, function (resp) {
@@ -194,6 +195,7 @@ var geo = function() {
           callback(resp.features);
         });
       } else {
+        console.log('Using cache.');
         callback(data_cache.features);
       }
     }
