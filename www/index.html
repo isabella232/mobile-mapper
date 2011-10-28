@@ -40,7 +40,7 @@
           <ul>
             <li><a href="#nearby_map" data-icon="home" title="map">map</a></li>
           	<li><a href="#list_view" data-icon="grid">listing</a></li>
-          	<li><a href="favorites.html" data-icon="star">favorite</a></li>
+          	<li><a href="#favorites-page" data-icon="star">favorite</a></li>
           	<li><a href="#add_record" data-icon="plus" data-transition="slideup" title="add artwork">upload</a></li>
           	<li><a href="#search_dialog" data-icon="search" data-rel="dialog" data-transition="slidedown">search</a></li>
         	</ul>
@@ -62,7 +62,7 @@
           <ul>
             <li><a href="#nearby_map" data-icon="home" title="map">map</a></li>
           	<li><a href="#list_view" data-icon="grid">listing</a></li>
-          	<li><a href="favorites.html" data-icon="star">favorite</a></li>
+          	<li><a href="#favorites-page" data-icon="star">favorite</a></li>
           	<li><a href="#add_record" data-icon="plus" data-transition="slideup" title="add artwork">upload</a></li>
           	<li><a href="index.html" data-icon="search">search</a></li>
         	</ul>
@@ -83,7 +83,7 @@
           <ul>
             <li><a href="#nearby_map" data-icon="home" title="map">map</a></li>
           	<li><a href="#list_view" data-icon="grid">listing</a></li>
-          	<li><a href="favorites.html" data-icon="star">favorite</a></li>
+          	<li><a href="#favorites-page" data-icon="star">favorite</a></li>
           	<li><a href="#add_record" data-icon="plus" data-transition="slideup" title="add artwork">upload</a></li>
           	<li><a href="#search_dialog" data-icon="search" data-rel="dialog" data-transition="slidedown">search</a></li>
         	</ul>
@@ -111,6 +111,18 @@
         	</ul>
       	</div>
       </div>
+    </div>
+    
+    <!-- Favorites -->
+    <div data-role="page" id="favorites-page" data-theme="d">
+        <div data-role="header" data-position="inline">
+            <a class="back-btn" href="" data-rel="back">back</a>
+            <h1 class="favorites-header"></h1>
+        </div>    
+
+        <div data-role="content" class="favorites-container">
+          <ul id="favorites_ul" data-theme="d"></ul>
+        </div>
     </div>
     
     <div data-role="page" id="search_dialog" data-theme="d">

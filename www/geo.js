@@ -1,5 +1,5 @@
 var geo = function() {
-  var map;
+  var map = null;
   var user_moved_map = false;
   var current_loc_icon = new google.maps.MarkerImage('images/current_location_icon.png', null, null, null, new google.maps.Size(12, 12));
   var current_location_marker = null;

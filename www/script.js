@@ -89,8 +89,13 @@ var ArtFinder = {};
         ArtFinder.Details();
       });
 
-      $('.favorites-page').live('pagebeforeshow',function(event){
+      $('#favorites-page').live('pagebeforeshow',function(event){
+        console.log('in pagebeforeshow');
         ArtFinder.Favorites();
+      });
+      $('#favorites-page').live('pagehide',function(event){
+        console.log('in pagehide');
+        //$("#favorites_ul").empty();
       });
 
       // Link up the "more info" button to the current piece of art
@@ -176,6 +181,9 @@ var ArtFinder = {};
     };
 
     var setupMap = function() {
+      update_map = true;
+      console.log('setupMap called.  update_map = '+ update_map);
+
       if(update_map) {
         update_map = false;
         $.mobile.showPageLoadingMsg();

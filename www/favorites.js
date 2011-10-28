@@ -6,20 +6,24 @@
     }, options),
     _id;
 
-    function _refreshFavorites(id) {
-      var $container = $('div[data-url*="favorites.html"]'),
+    var _refreshFavorites = function(id) {
+    //function _refreshFavorites(id) {
+      var $container = $('div[data-url*="favorites-page"]'),
           $favoritesTarget = $(_options.favoritesTarget, $container).html('Loading...'),
           detailsHtml = '';
           
+      console.log('check 1');
+          
       // Reset the list of pieces
-      $(_options.favoritesTarget).css('margin-left','0');
+      //$(_options.favoritesTarget).css('margin-left','0');
         
       $.mobile.showPageLoadingMsg();
       
       // Get the favorites for this user
       $.getJSON('http://'+app.couch+'/'+app.database+'/_design/pafCouchapp/_list/jsonp/favorites?key="'+_id+'"&callback=?', function(theFavorites) {
         $.mobile.hidePageLoadingMsg();
-
+console.log('check 2');
+console.log(theFavorites);
         if(theFavorites.length) {
           // Set the page title
           $(_options.detailHeader, $container).html('Your Favorites');
@@ -32,6 +36,7 @@
             } else {
               image_path = 'images/noimage.png';
             }
+console.log(image_path);
             detailsHtml += '<li class="piece" id="'+el._id+'"><h3>'+el.title+'</h3>' +
                         '<span class="street_address">'+el.address+'</span>'+
                         '<a href="details.html?id='+el._id+'" data-role="button" data-inline="true" data-icon="arrow-r">more</a>'+
@@ -65,7 +70,7 @@
         });
                 
       });
-    }
+    };
     
     //Init this page
     (function init() {
